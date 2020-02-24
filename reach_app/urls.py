@@ -8,6 +8,7 @@ urlpatterns = [
     path('dashboard', views.dashboard),
     path('new', views.new),
     path('stats', views.stats),
+    path('edit', views.edit),
     # Functions
     path('attempt_login', views.attempt_login),
     path('attempt_reg', views.attempt_reg),

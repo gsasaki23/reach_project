@@ -37,6 +37,16 @@ def stats(request):
     except KeyError:
         return redirect('/')
 
+# GET for Edit page
+def edit(request):
+    try:
+        context = {
+            "current_user": User.objects.get(id=request.session['user_id'])
+        }
+        return render(request, 'edit.html', context)
+    except KeyError:
+        return redirect('/')
+
 # POST for register, route to dashboard if success
 def attempt_reg(request):
     errors = User.objects.reg_validator(request.POST)
@@ -72,7 +82,6 @@ def attempt_login(request):
         current_user = User.objects.get(email=request.POST['login_email'])
         request.session['user_id'] = current_user.id
         return redirect('/dashboard')
-
 
 # POST for logging out, clearing session
 def logout(request):
