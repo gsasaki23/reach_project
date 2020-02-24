@@ -19,7 +19,7 @@
 </head>
 
 <body>
-    <div class="container-fluid bg-dark">
+    <div class="container-fluid">
         <!-- NavBar -->
         <nav class="navbar navbar-expand-sm navbar-light bg-light">
             <a class="navbar-brand">Hello {{current_user.first_name}}!</a>
@@ -34,10 +34,10 @@
                 <button class="btn btn-secondary mr-3" onclick="location.href='/new'">Add</button>
                 <button class="btn btn-secondary" onclick="location.href='/logout'">Log Out</button>
             </div>
-        </nav>
+        </nav><!-- NavBar -->
 
         <!-- Reached -->
-        <div class="row px-2">
+        <div class="row">
             <div class="col bg-primary">
                 <h3>Reached!</h3>
                 <table class="table table-striped table-bordered">
@@ -66,42 +66,53 @@
                     </tbody> -->
                 </table>
             </div>
-        </div>
-        
+        </div><!-- Reached -->
+
         <!-- Reaching (To Do) -->
-        <div class="row px-2">
-            <div class="col bg-warning">
-                <h3>Reaching (To Do)</h3>
-                <table class="table table-striped table-bordered">
-                    <thead class="thead-light">
+        <div class="row">
+            <div class="col">
+                <h3 class="bg-warning px-2">Reaching (To Do)</h3>
+                <table class="table table-striped table-bordered table-hover table-sm">
+                    <thead class="thead-dark">
                         <tr>
-                            <th>Action</th>
-                            <th>Status</th>
-                            <th>Last Action</th>
-                            <th>Position</th>
-                            <th>Company</th>
-                            <th>Contact</th>
-                            <th>Notes</th>
-                            <th>Edit</th>
+                            <th style="width: 7%">Action</th>
+                            <th style="width: 10%">Status</th>
+                            <th style="width: 10%">Last Action</th>
+                            <th style="width: 15%">Position</th>
+                            <th style="width: 10%">Company</th>
+                            <th style="width: 15%">Contact</th>
+                            <th style="width: 30%">Notes</th>
+                            <th style="width: 3%"></th>
                         </tr>
                     </thead>
-                    <!-- <tbody>
-                        {% for wish in pending_wishes %}
+                    <tbody>
+                        {% for position in applied_positions %}
                         <tr>
-                            <td>{{ wish.name }}</td>
-                            <td>{{ wish.created_at.date }}</td>
+                            <td>-Action-</td>
+                            <td>-Status-</td>
+                            <td>-Last Action-</td>
                             <td>
-                                <th><button class="btn btn-secondary" onclick="location.href='/edit/{{wish.id}}'">Edit</button></th>
+                                {{ position.title }}<br>
+                                {{ position.location }}<br>
+                                ${{ position.salary }}<br>
+                                <a href="{{ position.posting }}">Link</a>
                             </td>
+                            <td>
+                                {{ position.company.name }}<br>
+                                <a href="{{ position.company.info }}">Link</a>
+                            </td>
+                            <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
+                            <td>{{ position.note }}</td>
+                            <td><a href="/edit/{{position.id}}">Edit</a></td>
                         </tr>
                         {% endfor %}
-                    </tbody> -->
+                    </tbody>
                 </table>
             </div>
-        </div>
+        </div><!-- Reaching (To Do) -->
 
         <!-- Waiting -->
-        <div class="row px-2">
+        <div class="row">
             <div class="col bg-info">
                 <h3>Waiting</h3>
                 <table class="table table-striped table-bordered">
@@ -130,10 +141,10 @@
                     </tbody> -->
                 </table>
             </div>
-        </div>
+        </div><!-- Waiting -->
 
         <!-- Obsolete -->
-        <div class="row px-2">
+        <div class="row">
             <div class="col bg-secondary">
                 <h3>Obsolete</h3>
                 <table class="table table-striped table-bordered">
@@ -162,8 +173,14 @@
                     </tbody> -->
                 </table>
             </div>
-        </div>
-        
+        </div><!-- Obsolete -->
+
+        <!-- Footer -->
+        <footer class="footer fixed-bottom">
+            <div class="container">
+                <p class="text-muted">© 2020 Copyright: Gaku Sasaki</p>
+            </div>
+        </footer><!-- Footer -->
     </div>
 </body>
 

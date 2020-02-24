@@ -1,6 +1,7 @@
 from django.db import models
 import re
 import bcrypt
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class UserManager(models.Manager):
     def reg_validator(self, postData):
@@ -49,13 +50,48 @@ class UserManager(models.Manager):
         
         return errors
 
-
-
 class User(models.Model):
     first_name=models.CharField(max_length=255)
     last_name=models.CharField(max_length=255)
     email=models.CharField(max_length=255)
     password=models.CharField(max_length=255)
+    # positions = list of associated positions
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = UserManager()
+
+
+class Company(models.Model):
+    name=models.CharField(max_length=255)
+    info=models.TextField()
+    # positions = list of associated positions
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+class Contact(models.Model):
+    first_name=models.CharField(max_length=255)
+    last_name=models.CharField(max_length=255)
+    phone=models.CharField(max_length=255)
+    email=models.CharField(max_length=255)
+    # positions = list of associated positions
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+class Position(models.Model):
+    user=models.ForeignKey(User, related_name="positions", on_delete = models.CASCADE)
+    title=models.CharField(max_length=255)
+    location=models.CharField(max_length=255)
+    salary=models.IntegerField(blank=True, null=True)
+    posting=models.TextField()
+    company=models.ForeignKey(Company, blank=True, null=True, related_name="positions", on_delete = models.CASCADE)
+    contact=models.ForeignKey(Contact, blank=True, null=True, related_name="positions", on_delete = models.CASCADE)
+    note=models.TextField(blank=True, null=True)
+    
+    # TODO come back and change max value
+    status_code=models.IntegerField(
+        default=1,
+        validators=[MaxValueValidator(20), MinValueValidator(1)]
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

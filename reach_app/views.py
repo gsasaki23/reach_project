@@ -5,13 +5,22 @@ import bcrypt
 
 # GET for Index page
 def index(request):
-    return render(request, 'index.html')    
+    return render(request, 'index.html')
 
 # GET for Dashboard page
 def dashboard(request):
     try:
         context = {
-            "current_user": User.objects.get(id=request.session['user_id'])
+            "current_user": User.objects.get(id=request.session['user_id']),
+            # Area 1
+            
+            # Area 2
+            # Status Code 1 = Just applied
+            "applied_positions": Position.objects.filter(status_code=1),
+            # Area 3
+            
+            # Area 4
+            
         }
         return render(request, 'dashboard.html', context)
     except KeyError:
@@ -38,10 +47,11 @@ def stats(request):
         return redirect('/')
 
 # GET for Edit page
-def edit(request):
+def edit(request, position_id):
     try:
         context = {
-            "current_user": User.objects.get(id=request.session['user_id'])
+            "current_user": User.objects.get(id=request.session['user_id']),
+            "position": Position.objects.get(id=position_id)
         }
         return render(request, 'edit.html', context)
     except KeyError:
@@ -53,12 +63,13 @@ def attempt_reg(request):
     if len(errors) > 0:
         for key, value in errors.items():
             messages.error(request, value)
-        return redirect('/')    
-    
+        return redirect('/')
+
     else:
         # Hashing PW
-        pw_hash= bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt()).decode()
-        
+        pw_hash = bcrypt.hashpw(
+            request.POST['password'].encode(), bcrypt.gensalt()).decode()
+
         # Creates new User
         User.objects.create(
             first_name=request.POST["first_name"],
@@ -76,8 +87,8 @@ def attempt_login(request):
     if len(errors) > 0:
         for key, value in errors.items():
             messages.error(request, value)
-        return redirect('/')    
-    
+        return redirect('/')
+
     else:
         current_user = User.objects.get(email=request.POST['login_email'])
         request.session['user_id'] = current_user.id
@@ -87,3 +98,23 @@ def attempt_login(request):
 def logout(request):
     del request.session['user_id']
     return redirect('/')
+
+# POST for new position, route to dashboard if success
+def attempt_position(request):
+    # TODO add to existing company
+    # Creates new company
+    Company.objects.create(
+        name=request.POST["company_name"],
+        info=request.POST["company_info"],
+    )
+    
+    # Creates new position
+    Position.objects.create(
+        user=User.objects.get(id=request.session['user_id']),
+        title=request.POST["title"],
+        location=request.POST["location"],
+        salary=request.POST["salary"],
+        posting=request.POST["posting"],
+        company=Company.objects.last(),
+    )
+    return redirect('/dashboard')
