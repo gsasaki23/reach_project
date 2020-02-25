@@ -7,7 +7,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('dashboard', views.dashboard),
     path('new', views.new),
-    path('stats', views.stats),
     path('edit/<int:position_id>', views.edit),
     # Functions
     path('attempt_login', views.attempt_login),

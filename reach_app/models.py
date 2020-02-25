@@ -120,7 +120,6 @@ class PositionManager(models.Manager):
             
         return errors
 
-
 class Position(models.Model):
     user=models.ForeignKey(User, related_name="positions", on_delete = models.CASCADE)
     title=models.CharField(max_length=255)
@@ -129,6 +128,7 @@ class Position(models.Model):
     posting=models.TextField()
     company=models.ForeignKey(Company, blank=True, null=True, related_name="positions", on_delete = models.CASCADE)
     contact=models.ForeignKey(Contact, blank=True, null=True, related_name="positions", on_delete = models.CASCADE)
+    # limit to ~350 chars?
     note=models.TextField(default="None")
     fu_sent=models.BooleanField(default=False)
     assignment_done=models.BooleanField(default=False)

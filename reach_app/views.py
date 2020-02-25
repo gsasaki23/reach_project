@@ -70,16 +70,6 @@ def new(request):
     except KeyError:
         return redirect('/')
 
-# GET for Stats page
-def stats(request):
-    try:
-        context = {
-            "current_user": User.objects.get(id=request.session['user_id'])
-        }
-        return render(request, 'stats.html', context)
-    except KeyError:
-        return redirect('/')
-
 # GET for Edit page
 def edit(request, position_id):
     try:
