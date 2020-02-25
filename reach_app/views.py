@@ -135,15 +135,21 @@ def logout(request):
 
 # POST for new position, route to dashboard if success
 def attempt_position(request):
-    
-    # If company doesn't exist, create new, otherwise get existing object    
-    if len(Company.objects.filter(name=request.POST["company_name"])) == 0:
-        Company.objects.create(
-            name=request.POST["company_name"],
-        )
-        add_company = "existing"
+    # Validate Company Data
+    errors = Company.objects.reg_validator(request.POST)
+    if len(errors) > 0:
+        for key, value in errors.items():
+            messages.error(request, value)
+        return redirect('/new')
     else:
-        add_company = Company.objects.get(name=request.POST["company_name"])
+        # If company doesn't exist, create new, otherwise get existing object    
+        if len(Company.objects.filter(name=request.POST["company_name"])) == 0:
+            Company.objects.create(
+                name=request.POST["company_name"],
+            )
+            add_company = "existing"
+        else:
+            add_company = Company.objects.get(name=request.POST["company_name"])
     
     # Validate Position Data
     errors = Position.objects.reg_validator(request.POST)
@@ -198,6 +204,12 @@ def edit_position(request, position_id):
     pos.company=add_company
     #pos.contact= Contact object
     pos.save()
+    return redirect('/dashboard')
+
+# POST for deleting position, route to dashboard
+def delete_position(request, position_id):
+    pos = Position.objects.get(id=position_id)
+    pos.delete()
     return redirect('/dashboard')
 
 # POST for updating status code, refresh dashboard

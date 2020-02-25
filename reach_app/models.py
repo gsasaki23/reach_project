@@ -60,13 +60,24 @@ class User(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     objects = UserManager()
 
-
+class CompanyManager(models.Manager):
+    def reg_validator(self, postData):
+        errors = {}
+        
+        # Company Link format
+        if len(postData['company_info']) > 0:
+            if postData['company_info'].startswith('http://') == False and postData['company_info'].startswith('https://') == False:
+                errors['company_info'] = "Please enter the entire company URL"
+        
+        return errors
+        
 class Company(models.Model):
     name=models.CharField(max_length=255)
     info=models.TextField(default="")
     # positions = list of associated positions
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    objects = CompanyManager()
     
 class Contact(models.Model):
     first_name=models.CharField(max_length=255)
@@ -98,7 +109,7 @@ class PositionManager(models.Manager):
             
         # Link format
         if postData['posting'].startswith('http://') == False and postData['posting'].startswith('https://') == False:
-            errors['posting'] = "Please enter the entire URL"
+            errors['posting'] = "Please enter the entire job post URL"
 
         # Position Uniqueness with Given Company
         same_titles = Position.objects.filter(title=postData['title'])
@@ -106,7 +117,7 @@ class PositionManager(models.Manager):
             for position in same_titles:
                 if position.company.name == postData['company_name']:
                     errors['title'] = "Position already exists"
-        
+            
         return errors
 
 

@@ -16,4 +16,5 @@ urlpatterns = [
     path('attempt_position', views.attempt_position),
     path('update_status/<int:position_id>/<int:next_code>', views.update_status),
     path('edit_position/<int:position_id>', views.edit_position),
+    path('delete_position/<int:position_id>', views.delete_position),
 ]

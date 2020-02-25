@@ -69,7 +69,10 @@
                                 <option>{{company.name}}</option>
                                 {% endfor %}
                             </datalist>
-                            
+
+                            <label for="company_info" class="mt-2">(Optional) Company Link</label>
+                            <input type="text" class="form-control" name="company_info" placeholder="Copy + Paste a Link here!" >
+
                             {% if messages %}
                             <ul class="messages">
                                 {% for message in messages %}
