@@ -19,7 +19,7 @@
 </head>
 
 <body>
-    <div class="container-fluid bg-dark">
+    <div class="container-fluid">
         <!-- NavBar -->
         <nav class="navbar navbar-expand-sm navbar-light bg-light">
             <a class="navbar-brand">Edit Position</a>
@@ -35,7 +35,52 @@
             </div>
         </nav>
 
-        <h1>Postion name: {{position.title}}</h1>
+
+        <div class="row px-2 mt-2">
+            <div class="col bg-light">
+                <h1 class="text-center my-2">Edit Position</h1>
+                
+                <form action="/edit_position/{{position.id}}" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col">
+                            <label for="title" class="mt-2">Title</label>
+                            <input type="text" class="form-control" name="title" value="{{position.title}}" autofocus>
+        
+                            <label for="location" class="mt-2">Location</label>
+                            <input type="text" class="form-control" name="location" value="{{position.location}}" required>
+        
+                            <label for="salary" class="mt-2">Salary</label>
+                            <input type="text" class="form-control" name="salary" value="{{position.salary}}" required>
+        
+                            <label for="posting" class="mt-2">Post (Link)</label>
+                            <input type="text" class="form-control" name="posting" value="{{position.posting}}" required>
+                            
+                            <label for="note" class="mt-2">Note</label>
+                            <textarea type="text" class="form-control" name="note">{{position.note}}</textarea>
+        
+                            
+                        </div>
+                        <div class="col">
+                            <!-- TODO add to existing companies -->
+                            <label for="company_name" class="mt-2">Company Name</label>
+                            <input type="text" class="form-control" name="company_name" value="{{position.company.name}}" required>
+        
+                            <label for="company_info" class="mt-2">Company Info (Link)</label>
+                            <input type="text" class="form-control" name="company_info" value="{{position.company.info}}" required>
+                            
+                            <p>To Add:</p>
+                            <p>Option to add to existing list of companies in DB</p>
+                            <p>Option to add contact</p>
+                            <p>Re-format the salary given incorrect format</p>
+                            <p>If links don't start with https, add it to front</p>
+                        </div>
+                    </div>
+
+                    <button type="Add" class="btn btn-secondary d-block mx-auto w-50 my-3">Save</button>
+                </form>
+            </div>
+        </div>
 
         <!-- Footer -->
         <footer class="footer fixed-bottom">

@@ -19,7 +19,7 @@
 </head>
 
 <body>
-    <div class="container-fluid bg-dark">
+    <div class="container-fluid">
         <!-- NavBar -->
         <nav class="navbar navbar-expand-sm navbar-light bg-light">
             <a class="navbar-brand">Add a Position!</a>
@@ -55,15 +55,20 @@
         
                             <label for="posting" class="mt-2">Post (Link)</label>
                             <input type="text" class="form-control" name="posting" placeholder="Copy + Paste a Link here!" required>
+
+                            <label for="note" class="mt-2">(Optional) Note</label>
+                            <textarea type="text" class="form-control" placeholder="Optional Note" name="note"></textarea>
         
+                            
+                        </div>
+                        <div class="col">
                             <!-- TODO add to existing companies -->
                             <label for="company_name" class="mt-2">Company Name</label>
                             <input type="text" class="form-control" name="company_name" placeholder="ex: Google" required>
         
                             <label for="company_info" class="mt-2">Company Info (Link)</label>
                             <input type="text" class="form-control" name="company_info" placeholder="Copy + Paste a Link here!" required>
-                        </div>
-                        <div class="col">
+
                             <p>To Add:</p>
                             <p>Option to add to existing list of companies in DB</p>
                             <p>Option to add contact</p>

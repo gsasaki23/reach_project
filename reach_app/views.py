@@ -3,6 +3,7 @@ from django.contrib import messages
 from .models import *
 import bcrypt
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 # GET for Index page
@@ -151,6 +152,20 @@ def attempt_position(request):
     )
     return redirect('/dashboard')
 
+# POST for new position, route to dashboard if success
+def edit_position(request, position_id):
+    pos = Position.objects.get(id=position_id)
+
+    pos.title=request.POST["title"]
+    pos.location=request.POST["location"] 
+    pos.salary=request.POST["salary"]
+    pos.posting=request.POST["posting"]
+    pos.note=request.POST["note"]
+    #pos.company= Company object
+    #pos.contact= Contact object
+    pos.save()
+    return redirect('/dashboard')
+
 # POST for updating status code, refresh dashboard
 def update_status(request, position_id, next_code):
     pos = Position.objects.get(id=position_id)
@@ -271,13 +286,18 @@ def update_status(request, position_id, next_code):
     # TODO django's updated_at auto is 7 hours ahead???
     return redirect('/dashboard')
     
-    
-    
-    
+# Adds necessary followups to waiting positions    
 def refresh_followups():
-    # look at all positions in waiting
+    user_followup_setting = 7
+    today_minus_days = datetime.now() + relativedelta(days=-user_followup_setting)
+
+    for position in Position.objects.filter(status_code=1):
+        if (position.updated_at.date() >= today_minus_days.date() and position.fu_sent == False):
+            position.status_code == 2
+            position.save()
     
-    # applied, followup not sent, updated_at is more than X days ago -> change status from 1 to 2
-    
-    # interviewed, followup not sent, updated_at is more than X days ago -> change status from 11 to 13
+    for position in Position.objects.filter(status_code=11):
+        if (position.updated_at.date() >= today_minus_days.date() and position.fu_sent == False):
+            position.status_code == 13
+            position.save()
     return
