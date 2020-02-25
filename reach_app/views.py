@@ -14,7 +14,11 @@ def dashboard(request):
     try:
         refresh_followups()
         
-        reached_positions = []
+        code_21 = Position.objects.filter(status_code = 21)
+        code_22 = Position.objects.filter(status_code = 22)
+        code_23 = Position.objects.filter(status_code = 23)
+        reached_positions = code_21 | code_22 | code_23
+        reached_positions.order_by("status_code")
         
         todo_positions = []
         
@@ -179,6 +183,31 @@ def update_status(request, position_id, next_code):
         pos.assignment_done = False
         pos.ty_sent = False
     
+    elif pos.status_code == 21 and next_code == 22:
+        pos.status_code = 22
+        pos.fu_sent = False
+        pos.assignment_done = False
+        pos.ty_sent = False
+    elif pos.status_code == 21 and next_code == 23:
+        pos.status_code = 23
+        pos.fu_sent = False
+        pos.assignment_done = False
+        pos.ty_sent = False
+    elif pos.status_code == 22 and next_code == 4:
+        pos.status_code = 4
+        pos.fu_sent = False
+        pos.assignment_done = False
+        pos.ty_sent = False
+    elif pos.status_code == 22 and next_code == 21:
+        pos.status_code = 21
+        pos.fu_sent = False
+        pos.assignment_done = False
+        pos.ty_sent = False
+        
+        
+        
+        
+        
     # 3 to 1: change assignment_done to true
     
     # # 12 Interviewed, TY Missing -> 11 Interviewed

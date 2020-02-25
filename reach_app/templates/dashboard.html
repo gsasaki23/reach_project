@@ -57,14 +57,33 @@
                     <tbody>
                         {% for position in reached_positions %}
                         <tr>
-                            <td>-Action-</td>
-
-                            {% if position.status_code == 1 %}
-                            <td>Applied</td>
-                            {% else %}
-                            <td></td>
+                            <td>
+                                {% if position.status_code == 21 %}
+                                <!-- 21 to 23 -->
+                                <a href="/update_status/{{position.id}}/23">Accepted</a><br>
+                                <!-- 21 to 22 -->
+                                <a href="/update_status/{{position.id}}/22">Declined</a><br>
+                                {% elif position.status_code == 22 %}
+                                <!-- 22 to 4 -->
+                                <a href="/update_status/{{position.id}}/4">Got Interview</a><br>
+                                <!-- 22 to 21 -->
+                                <a href="/update_status/{{position.id}}/21">Got New Offer</a><br>
+                                {% elif position.status_code == 23 %}
+                                -
                             {% endif %}
+                            </td>
+    
 
+                            <td>
+                            {% if position.status_code == 21 %}
+                                Offered<br>
+                            {% elif position.status_code == 22 %}
+                                Declined<br>
+                            {% elif position.status_code == 23 %}
+                                Accepted!<br>
+                            </td>
+                            {% endif %}
+                            
                             <td>
                                 {{position.updated_at.date}}
                             </td>
