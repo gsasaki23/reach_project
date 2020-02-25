@@ -128,13 +128,60 @@
                     <tbody>
                         {% for position in todo_positions %}
                         <tr>
-                            <td>-Action-</td>
-
-                            {% if position.status_code == 0 %}
-                            <td>-Status-</td>
-                            {% else %}
-                            <td></td>
+                            <td>
+                                {% if position.status_code == 2 %}
+                                <!-- 2 to 1 -->
+                                <a href="/update_status/{{position.id}}/1">Followed up</a><br>
+                                {% elif position.status_code == 3 %}
+                                <!-- 3 to 1 -->
+                                <a href="/update_status/{{position.id}}/1">Completed Assignment</a><br>
+                                {% elif position.status_code == 4 %}
+                                <!-- 4 to 12 -->
+                                <a href="/update_status/{{position.id}}/12">Took Interview</a><br>
+                                <!-- 4 to 21 -->
+                                <a href="/update_status/{{position.id}}/21">Interview Cancelled</a><br>
+                                {% elif position.status_code == 12 %}
+                                <!-- 12 to 11 -->
+                                <a href="/update_status/{{position.id}}/11">Thank-you Sent</a><br>
+                                {% elif position.status_code == 13 %}
+                                <!-- 13 to 11 -->
+                                <a href="/update_status/{{position.id}}/11">Follow-up Sent</a><br>
+                                {% elif position.status_code == 14 %}
+                                <!-- 14 to 11 -->
+                                <a href="/update_status/{{position.id}}/11">Completed Assignment</a><br>
                             {% endif %}
+                            </td>
+
+                            <td>
+                            {% if position.status_code == 2 %}
+                                Applied<br>
+                                {% if position.fu_sent == False %}
+                                Need Follow-up
+                                {% endif %}
+                            {% elif position.status_code == 3 %}
+                                Applied<br>
+                                {% if position.assignment_done == False %}
+                                Do Assignment
+                                {% endif %}
+                            {% elif position.status_code == 4 %}
+                                Prep For Interview<br>
+                            {% elif position.status_code == 12 %}
+                                Interview Taken<br>
+                                {% if position.ty_sent == False %}
+                                Need Thank-you Note
+                                {% endif %}
+                            {% elif position.status_code == 13 %}
+                                Interview Taken<br>
+                                {% if position.fu_sent == False %}
+                                Need Follow-up
+                                {% endif %}
+                            {% elif position.status_code == 14 %}
+                                Interview Taken<br>
+                                {% if position.assignment_done == False %}
+                                Do Assignment
+                                {% endif %}
+                            {% endif %}
+                            </td>
 
                             <td>{{position.updated_at.date}}</td>
 

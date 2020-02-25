@@ -20,7 +20,14 @@ def dashboard(request):
         reached_positions = code_21 | code_22 | code_23
         reached_positions.order_by("status_code")
         
-        todo_positions = []
+        code_2 = Position.objects.filter(status_code = 2)
+        code_3 = Position.objects.filter(status_code = 3)
+        code_4 = Position.objects.filter(status_code = 4)
+        code_12 = Position.objects.filter(status_code = 12)
+        code_13 = Position.objects.filter(status_code = 13)
+        code_14 = Position.objects.filter(status_code = 14)
+        todo_positions = code_2 | code_3 | code_4 | code_12 | code_13 | code_14
+        todo_positions.order_by("updated_at")
         
         code_1 = Position.objects.filter(status_code = 1)
         code_11 = Position.objects.filter(status_code = 11)
@@ -183,6 +190,31 @@ def update_status(request, position_id, next_code):
         pos.assignment_done = False
         pos.ty_sent = False
     
+    elif pos.status_code == 2 and next_code == 1:
+        pos.status_code = 1
+        pos.fu_sent = True
+    elif pos.status_code == 3 and next_code == 1:
+        pos.status_code = 1
+        pos.assignment_done = True
+    elif pos.status_code == 4 and next_code == 12:
+        pos.status_code = 12
+        pos.fu_sent = False
+        pos.ty_sent = False
+    elif pos.status_code == 4 and next_code == 21:
+        pos.status_code = 21
+        pos.fu_sent = False
+        pos.assignment_done = False
+        pos.ty_sent = False
+    elif pos.status_code == 12 and next_code == 11:
+        pos.status_code = 11
+        pos.ty_sent = True
+    elif pos.status_code == 13 and next_code == 11:
+        pos.status_code = 11
+        pos.fu_sent = True
+    elif pos.status_code == 14 and next_code == 11:
+        pos.status_code = 11
+        pos.assignment_done = True
+    
     elif pos.status_code == 21 and next_code == 22:
         pos.status_code = 22
         pos.fu_sent = False
@@ -203,20 +235,7 @@ def update_status(request, position_id, next_code):
         pos.fu_sent = False
         pos.assignment_done = False
         pos.ty_sent = False
-        
-        
-        
-        
-        
-    # 3 to 1: change assignment_done to true
-    
-    # # 12 Interviewed, TY Missing -> 11 Interviewed
-    # if pos.status_code == 12 and next_code == 11:
-    #     pos.status_code = 11
-    #     pos.ty_sent = True
-    
-    
-    
+
     elif pos.status_code == 31 and next_code == 4:
         pos.status_code = 4
         pos.fu_sent = False
@@ -247,8 +266,6 @@ def update_status(request, position_id, next_code):
         pos.fu_sent = False
         pos.assignment_done = False
         pos.ty_sent = False
-    
-    
     
     pos.save()
     # TODO django's updated_at auto is 7 hours ahead???
