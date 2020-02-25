@@ -86,12 +86,14 @@ class Position(models.Model):
     company=models.ForeignKey(Company, blank=True, null=True, related_name="positions", on_delete = models.CASCADE)
     contact=models.ForeignKey(Contact, blank=True, null=True, related_name="positions", on_delete = models.CASCADE)
     note=models.TextField(blank=True, null=True)
+    fu_sent=models.BooleanField(default=False)
+    assignment_done=models.BooleanField(default=False)
+    ty_sent=models.BooleanField(default=False)
     
     # TODO come back and change max value
     status_code=models.IntegerField(
         default=1,
-        validators=[MaxValueValidator(20), MinValueValidator(1)]
+        validators=[MaxValueValidator(40), MinValueValidator(1)]
     )
-    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

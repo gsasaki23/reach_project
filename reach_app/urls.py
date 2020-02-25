@@ -14,4 +14,5 @@ urlpatterns = [
     path('attempt_reg', views.attempt_reg),
     path('logout', views.logout),
     path('attempt_position', views.attempt_position),
+    path('update_status/<int:position_id>/<int:next_code>', views.update_status),
 ]
