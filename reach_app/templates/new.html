@@ -62,18 +62,21 @@
                             
                         </div>
                         <div class="col">
-                            <!-- TODO add to existing companies -->
                             <label for="company_name" class="mt-2">Company Name</label>
-                            <input type="text" class="form-control" name="company_name" placeholder="ex: Google" required>
-        
-                            <label for="company_info" class="mt-2">Company Info (Link)</label>
-                            <input type="text" class="form-control" name="company_info" placeholder="Copy + Paste a Link here!" required>
-
-                            <p>To Add:</p>
-                            <p>Option to add to existing list of companies in DB</p>
-                            <p>Option to add contact</p>
-                            <p>Re-format the salary given incorrect format</p>
-                            <p>If links don't start with https, add it to front</p>
+                            <input type="text" list="companies" class="form-control" name = "company_name" placeholder="Type here, or click to pick one" required>
+                            <datalist id="companies">
+                                {% for company in companies %}
+                                <option>{{company.name}}</option>
+                                {% endfor %}
+                            </datalist>
+                            
+                            {% if messages %}
+                            <ul class="messages">
+                                {% for message in messages %}
+                                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
                         </div>
                     </div>
 

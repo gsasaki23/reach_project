@@ -63,7 +63,8 @@ def dashboard(request):
 def new(request):
     try:
         context = {
-            "current_user": User.objects.get(id=request.session['user_id'])
+            "current_user": User.objects.get(id=request.session['user_id']),
+            "companies": Company.objects.all(),
         }
         return render(request, 'new.html', context)
     except KeyError:
@@ -134,23 +135,36 @@ def logout(request):
 
 # POST for new position, route to dashboard if success
 def attempt_position(request):
-    # TODO add to existing company
-    # Creates new company
-    Company.objects.create(
-        name=request.POST["company_name"],
-        info=request.POST["company_info"],
-    )
     
-    # Creates new position
-    Position.objects.create(
-        user=User.objects.get(id=request.session['user_id']),
-        title=request.POST["title"],
-        location=request.POST["location"],
-        salary=request.POST["salary"],
-        posting=request.POST["posting"],
-        company=Company.objects.last(),
-    )
-    return redirect('/dashboard')
+    # If company doesn't exist, create new, otherwise get existing object    
+    if len(Company.objects.filter(name=request.POST["company_name"])) == 0:
+        Company.objects.create(
+            name=request.POST["company_name"],
+        )
+        add_company = "existing"
+    else:
+        add_company = Company.objects.get(name=request.POST["company_name"])
+    
+    # Validate Position Data
+    errors = Position.objects.reg_validator(request.POST)
+    if len(errors) > 0:
+        for key, value in errors.items():
+            messages.error(request, value)
+        return redirect('/new')
+    else:
+        if add_company == "existing":
+            add_company = Company.objects.last()
+        # Creates new position
+        Position.objects.create(
+            user=User.objects.get(id=request.session['user_id']),
+            title=request.POST["title"],
+            location=request.POST["location"],
+            salary=request.POST["salary"],
+            posting=request.POST["posting"],
+            note=request.POST["note"],
+            company=add_company,
+        )
+        return redirect('/dashboard')
 
 # POST for new position, route to dashboard if success
 def edit_position(request, position_id):
@@ -161,7 +175,27 @@ def edit_position(request, position_id):
     pos.salary=request.POST["salary"]
     pos.posting=request.POST["posting"]
     pos.note=request.POST["note"]
-    #pos.company= Company object
+    
+    # If new company:
+    if len(Company.objects.filter(name=request.POST["company_name"])) == 0:
+        if request.POST["company_info"] == "":
+            temp_info = "" 
+        else:
+            temp_info = request.POST["company_info"]
+        Company.objects.create(
+            name=request.POST["company_name"],
+            info=temp_info,
+        )
+        add_company = Company.objects.last()
+    # If existing company:
+    else:
+        add_company = Company.objects.get(name=request.POST["company_name"])
+        # If info is a new link, overwrite
+        if add_company.info != request.POST["company_info"]:
+            add_company.info = request.POST["company_info"]
+            add_company.save()
+    
+    pos.company=add_company
     #pos.contact= Contact object
     pos.save()
     return redirect('/dashboard')

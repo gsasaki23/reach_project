@@ -63,7 +63,7 @@ class User(models.Model):
 
 class Company(models.Model):
     name=models.CharField(max_length=255)
-    info=models.TextField()
+    info=models.TextField(default="")
     # positions = list of associated positions
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -77,6 +77,39 @@ class Contact(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+class PositionManager(models.Manager):
+    def reg_validator(self, postData):
+        errors = {}
+        
+        # Title more than 2
+        if len(postData['title']) < 2:
+            errors['title'] = "Job Title must be at least 2 characters"
+
+        # Location more than 2
+        if len(postData['location']) < 2:
+            errors['location'] = "Location must be at least 2 characters"
+            
+        # Salary format
+        try: 
+            if int(postData['salary']) > 0:
+                pass
+        except: 
+            errors['salary'] = "Please enter the salary in the correct format. (ex: $500,000 should be entered as 500000)"
+            
+        # Link format
+        if postData['posting'].startswith('http://') == False and postData['posting'].startswith('https://') == False:
+            errors['posting'] = "Please enter the entire URL"
+
+        # Position Uniqueness with Given Company
+        same_titles = Position.objects.filter(title=postData['title'])
+        if len(same_titles) != 0: 
+            for position in same_titles:
+                if position.company.name == postData['company_name']:
+                    errors['title'] = "Position already exists"
+        
+        return errors
+
+
 class Position(models.Model):
     user=models.ForeignKey(User, related_name="positions", on_delete = models.CASCADE)
     title=models.CharField(max_length=255)
@@ -97,3 +130,4 @@ class Position(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    objects = PositionManager()

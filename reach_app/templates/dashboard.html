@@ -96,7 +96,9 @@
                             </td>
                             <td>
                                 {{ position.company.name }}<br>
+                                {% if position.company.info != "" %}
                                 <a href="{{ position.company.info }}">Link</a>
+                                {% endif %}
                             </td>
                             <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
                             <td>{{ position.note }}</td>
@@ -193,7 +195,9 @@
                             </td>
                             <td>
                                 {{ position.company.name }}<br>
+                                {% if position.company.info != "" %}
                                 <a href="{{ position.company.info }}">Link</a>
+                                {% endif %}
                             </td>
                             <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
                             <td>{{ position.note }}</td>
@@ -285,7 +289,9 @@
                             </td>
                             <td>
                                 {{ position.company.name }}<br>
+                                {% if position.company.info != "" %}
                                 <a href="{{ position.company.info }}">Link</a>
+                                {% endif %}
                             </td>
                             <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
                             <td>{{ position.note }}</td>
@@ -364,7 +370,9 @@
                             </td>
                             <td>
                                 {{ position.company.name }}<br>
+                                {% if position.company.info != "" %}
                                 <a href="{{ position.company.info }}">Link</a>
+                                {% endif %}
                             </td>
                             <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
                             <td>{{ position.note }}</td>
