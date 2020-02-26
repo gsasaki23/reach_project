@@ -16,6 +16,13 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
+    
+    <style>
+        .d-b {
+            display: block;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -69,9 +76,34 @@
                                 {% endfor %}
                             </datalist>
         
-                            <label for="company_info" class="mt-2">Company Info (Link)</label>
+                            <label for="company_info" class="mt-2">(Optional) Company Link</label>
                             <input type="text" class="form-control" name="company_info" value="{{position.company.info}}" >
 
+                            {% if position.contact == None %}
+                            <label for="contact_have" class="mt-5">Do you have a contact to add?</label>
+                            <select name="contact_have" class="d-b">
+                                <option value="false">No</option>
+                                <option value="true">Yes</option>
+                            </select>
+                            {% endif %}
+                            {% if position.contact != None %}
+                            <input type="hidden" name="contact_have" value="true">
+                            {% endif %}
+
+                            <label for="contact_name" class="mt-2 d-b">Contact Full Name</label>
+                            <input type="text" class="form-control" name="contact_name" value="{{position.contact.full_name}}" >
+                            <label for="contact_phone" class="mt-2 d-b">(Optional) Phone Number</label>
+                            <input type="text" class="form-control" name="contact_phone" value="{{position.contact.phone}}" >
+                            <label for="contact_email" class="mt-2 d-b">(Optional) Contact Email</label>
+                            <input type="text" class="form-control" name="contact_email" value="{{position.contact.email}}">
+
+                            {% if messages %}
+                            <ul class="messages mt-3">
+                                {% for message in messages %}
+                                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
                         </div>
                     </div>
 

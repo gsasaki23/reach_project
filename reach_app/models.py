@@ -70,7 +70,7 @@ class CompanyManager(models.Manager):
                 errors['company_info'] = "Please enter the entire company URL"
         
         return errors
-        
+
 class Company(models.Model):
     name=models.CharField(max_length=255)
     info=models.TextField(default="")
@@ -78,15 +78,37 @@ class Company(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = CompanyManager()
+
+class ContactManager(models.Manager):
+    # Not validating for uniqueness because multiple users may have same contact with different phone/email.
     
+    def reg_validator(self, postData):
+        errors = {}
+        
+        # If they marked as having a contact, but name is empty
+        if postData['contact_have'] == True and len(postData['contact_name']) == 0:
+                "Contact Name required if you have one"
+                
+        # If name was entered, at least 2 chars long
+        if len(postData['contact_name']) > 0 and len(postData['contact_name']) < 2:
+            errors['company_contact_name'] = "Please enter an actual Contact Name"
+        
+        # If email was entered, email valid
+        if len(postData['contact_email']) > 0:
+            EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
+            if not EMAIL_REGEX.match(postData['contact_email']):
+                errors['contact_email'] = "Invalid email address format"
+            
+        return errors
+
 class Contact(models.Model):
-    first_name=models.CharField(max_length=255)
-    last_name=models.CharField(max_length=255)
-    phone=models.CharField(max_length=255)
-    email=models.CharField(max_length=255)
+    full_name=models.CharField(max_length=255)
+    phone=models.CharField(max_length=255, default="")
+    email=models.CharField(max_length=255, default="")
     # positions = list of associated positions
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    objects = ContactManager()
     
 class PositionManager(models.Manager):
     def reg_validator(self, postData):
@@ -134,10 +156,9 @@ class Position(models.Model):
     assignment_done=models.BooleanField(default=False)
     ty_sent=models.BooleanField(default=False)
     
-    # TODO come back and change max value
     status_code=models.IntegerField(
         default=1,
-        validators=[MaxValueValidator(40), MinValueValidator(1)]
+        validators=[MaxValueValidator(35), MinValueValidator(1)]
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

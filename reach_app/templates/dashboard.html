@@ -21,7 +21,8 @@
         #logo {
 
         }
-        #section-header {
+        .panel-title {
+            margin-bottom: 0;
             border-radius: 10px 10px 0px 0px;
         }
     </style>
@@ -64,17 +65,14 @@
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
             <!-- Reached -->
             <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="heading-reached">
-                    <h3 class="panel-title bg-success p-3">
-                        <a class="btn btn-secondary" data-toggle="collapse" data-parent="#accordion" href="#collapse-reached" aria-expanded="true"
+                <h3 class="panel-title bg-success p-3">
+                    <a class="btn btn-secondary" data-toggle="collapse" data-parent="#accordion" href="#collapse-reached" aria-expanded="true"
                             aria-controls="collapse-reached">
                             +/-
                         </a>
-                        [{{reached_positions_count}}] Reached!
-                    </h3>
-                    
-                </div>
-                <div id="collapse-reached" class="panel-collapse collapse show multi-collapse" role="tabpanel" aria-labelledby="heading-reached">
+                        [{{todo_positions_count}}] Reached
+                </h3>
+                <div id="collapse-reached" class="panel-collapse collapse show multi-collapse" role="tabpanel">
                     <div class="panel-body">
 
                         <!-- Has Positions -->
@@ -138,7 +136,13 @@
                                         <a href="{{ position.company.info }}">Link</a>
                                         {% endif %}
                                     </td>
-                                    <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
+
+                                    <td>
+                                        {{ position.contact.full_name }}<br>
+                                        {{ position.contact.phone }}<br>
+                                        {{ position.contact.email }}
+                                    </td>
+
                                     <td>{{ position.note }}</td>
                                     <td><a href="/edit/{{position.id}}">Edit</a></td>
                                 </tr>
@@ -157,16 +161,13 @@
 
             <!-- To Do -->
             <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="heading-todo">
-                    <h3 class="panel-title bg-danger p-3">
+                <h3 class="panel-title bg-danger p-3">
                         <a class="btn btn-secondary" data-toggle="collapse" data-parent="#accordion" href="#collapse-todo" aria-expanded="true"
                             aria-controls="collapse-todo">
                             +/-
                         </a>
                         [{{todo_positions_count}}] To Do
-                    </h3>
-                    
-                </div>
+                </h3>
                 <div id="collapse-todo" class="panel-collapse collapse show multi-collapse" role="tabpanel" aria-labelledby="heading-todo">
                     <div class="panel-body">
                         <!-- Has Positions -->
@@ -256,7 +257,12 @@
                                         <a href="{{ position.company.info }}">Link</a>
                                         {% endif %}
                                     </td>
-                                    <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
+                                    <td>
+                                        {{ position.contact.full_name }}<br>
+                                        {{ position.contact.phone }}<br>
+                                        {{ position.contact.email }}
+                                    </td>
+
                                     <td>{{ position.note }}</td>
                                     <td><a href="/edit/{{position.id}}">Edit</a></td>
                                 </tr>
@@ -275,16 +281,13 @@
 
             <!-- Waiting -->
             <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="heading-waiting">
-                    <h3 class="panel-title bg-warning p-3">
-                        <a class="btn btn-secondary" data-toggle="collapse" data-parent="#accordion" href="#collapse-waiting" aria-expanded="true"
-                            aria-controls="collapse-waiting">
-                            +/-
-                        </a>
-                        [{{waiting_positions_count}}] Waiting
-                    </h3>
-                    
-                </div>
+                <h3 class="panel-title bg-warning p-3">
+                    <a class="btn btn-secondary" data-toggle="collapse" data-parent="#accordion" href="#collapse-waiting" aria-expanded="true"
+                        aria-controls="collapse-waiting">
+                        +/-
+                    </a>
+                    [{{waiting_positions_count}}] Waiting
+                </h3>
                 <div id="collapse-waiting" class="panel-collapse collapse show multi-collapse" role="tabpanel" aria-labelledby="heading-waiting">
                     <div class="panel-body">
                         <!-- Has Positions -->
@@ -363,7 +366,12 @@
                                         <a href="{{ position.company.info }}">Link</a>
                                         {% endif %}
                                     </td>
-                                    <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
+                                    <td>
+                                        {{ position.contact.full_name }}<br>
+                                        {{ position.contact.phone }}<br>
+                                        {{ position.contact.email }}
+                                    </td>
+
                                     <td>{{ position.note }}</td>
                                     <td><a href="/edit/{{position.id}}">Edit</a></td>
                                 </tr>
@@ -382,16 +390,13 @@
 
             <!-- Obsolete -->
             <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="heading-obsolete">
-                    <h3 class="panel-title bg-info p-3">
-                        <a class="btn btn-secondary" data-toggle="collapse" data-parent="#accordion" href="#collapse-obsolete" aria-expanded="true"
-                            aria-controls="collapse-obsolete">
-                            +/-
-                        </a>
-                        [{{obsolete_positions_count}}] Obsolete
-                    </h3>
-                    
-                </div>
+                <h3 class="panel-title bg-info p-3">
+                    <a class="btn btn-secondary" data-toggle="collapse" data-parent="#accordion" href="#collapse-obsolete" aria-expanded="true"
+                        aria-controls="collapse-obsolete">
+                        +/-
+                    </a>
+                    [{{obsolete_positions_count}}] Obsolete
+                </h3>
                 <div id="collapse-obsolete" class="panel-collapse collapse show multi-collapse" role="tabpanel" aria-labelledby="heading-obsolete">
                     <div class="panel-body">
 
@@ -452,7 +457,12 @@
                                         <a href="{{ position.company.info }}">Link</a>
                                         {% endif %}
                                     </td>
-                                    <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
+                                    <td>
+                                        {{ position.contact.full_name }}<br>
+                                        {{ position.contact.phone }}<br>
+                                        {{ position.contact.email }}
+                                    </td>
+
                                     <td>{{ position.note }}</td>
                                     <td><a href="/edit/{{position.id}}">Edit</a></td>
                                 </tr>

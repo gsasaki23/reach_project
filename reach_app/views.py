@@ -145,6 +145,26 @@ def attempt_position(request):
         else:
             add_company = Company.objects.get(name=request.POST["company_name"])
     
+    # If contact was given
+    if request.POST["contact_have"] == "true":
+        # Validate Contact Data
+        errors = Contact.objects.reg_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request, value)
+            return redirect('/new')
+        elif request.POST["contact_name"] == "":
+            add_contact = None
+        else:
+            Contact.objects.create(
+                full_name=request.POST["contact_name"],
+                phone=request.POST["contact_phone"],
+                email=request.POST["contact_email"],
+            )
+            add_contact = Contact.objects.last()
+    else:
+        add_contact = None
+    
     # Validate Position Data
     errors = Position.objects.reg_validator(request.POST)
     if len(errors) > 0:
@@ -163,6 +183,7 @@ def attempt_position(request):
             posting=request.POST["posting"],
             note=request.POST["note"],
             company=add_company,
+            contact=add_contact,
         )
         return redirect('/dashboard')
 
@@ -176,12 +197,14 @@ def edit_position(request, position_id):
     pos.posting=request.POST["posting"]
     pos.note=request.POST["note"]
     
+    # TODO missing validation on new company create?
     # If new company:
     if len(Company.objects.filter(name=request.POST["company_name"])) == 0:
         if request.POST["company_info"] == "":
             temp_info = "" 
         else:
             temp_info = request.POST["company_info"]
+        
         Company.objects.create(
             name=request.POST["company_name"],
             info=temp_info,
@@ -195,8 +218,37 @@ def edit_position(request, position_id):
             add_company.info = request.POST["company_info"]
             add_company.save()
     
+    # If new contact (i.e. position doesnt have contact yet):
+    if request.POST['contact_have'] == "true" and pos.contact == None:
+        # Validate Contact Data
+        errors = Contact.objects.reg_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request, value)
+            return redirect('/edit')
+        else:
+            Contact.objects.create(
+                full_name=request.POST["contact_name"],
+                phone=request.POST["contact_phone"],
+                email=request.POST["contact_email"],
+            )
+            pos.contact = Contact.objects.last()
+        
+    # If existing contact:
+    elif request.POST['contact_have'] == "true" and pos.contact != None:
+        # Validate Contact Data
+        errors = Contact.objects.reg_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request, value)
+            return redirect(f'/edit/{pos.id}')
+        else:
+            pos.contact.full_name = request.POST['contact_name']
+            pos.contact.phone = request.POST['contact_phone']
+            pos.contact.email = request.POST['contact_email']
+            pos.contact.save()
+    
     pos.company=add_company
-    #pos.contact= Contact object
     pos.save()
     return redirect('/dashboard')
 
