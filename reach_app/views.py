@@ -101,8 +101,7 @@ def attempt_reg(request):
             email=request.POST["email"],
             password=pw_hash,
         )
-        current_user = User.objects.last().id
-        request.session['user_id'] = current_user.id
+        request.session['user_id'] = User.objects.last().id
         return redirect('/dashboard')
 
 # POST for login, route to dashboard if success
@@ -114,8 +113,7 @@ def attempt_login(request):
         return redirect('/')
 
     else:
-        current_user = User.objects.get(email=request.POST['login_email'])
-        request.session['user_id'] = current_user.id
+        request.session['user_id'] = User.objects.get(email=request.POST['login_email']).id
         return redirect('/dashboard')
 
 # POST for logging out, clearing session
