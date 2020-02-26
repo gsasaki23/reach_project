@@ -13,32 +13,33 @@ def index(request):
 # GET for Dashboard page
 def dashboard(request):
     try:
-        refresh_followups()
+        refresh_followups(request)
         
-        code_21 = Position.objects.filter(status_code = 21)
-        code_22 = Position.objects.filter(status_code = 22)
-        code_23 = Position.objects.filter(status_code = 23)
+        
+        code_21 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 21)
+        code_22 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 22)
+        code_23 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 23)
         reached_positions = code_21 | code_22 | code_23
         reached_positions.order_by("status_code")
         
-        code_2 = Position.objects.filter(status_code = 2)
-        code_3 = Position.objects.filter(status_code = 3)
-        code_4 = Position.objects.filter(status_code = 4)
-        code_12 = Position.objects.filter(status_code = 12)
-        code_13 = Position.objects.filter(status_code = 13)
-        code_14 = Position.objects.filter(status_code = 14)
+        code_2 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 2)
+        code_3 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 3)
+        code_4 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 4)
+        code_12 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 12)
+        code_13 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 13)
+        code_14 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 14)
         todo_positions = code_2 | code_3 | code_4 | code_12 | code_13 | code_14
         todo_positions.order_by("updated_at")
         
-        code_1 = Position.objects.filter(status_code = 1)
-        code_11 = Position.objects.filter(status_code = 11)
+        code_1 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 1)
+        code_11 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 11)
         waiting_positions = code_1 | code_11
         waiting_positions.order_by("updated_at")
         
-        code_31 = Position.objects.filter(status_code = 31)
-        code_32 = Position.objects.filter(status_code = 32)
-        code_33 = Position.objects.filter(status_code = 33)
-        code_34 = Position.objects.filter(status_code = 34)
+        code_31 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 31)
+        code_32 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 32)
+        code_33 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 33)
+        code_34 = User.objects.get(id=request.session['user_id']).positions.filter(status_code = 34)
         obsolete_positions = code_31 | code_32 | code_33 | code_34
         obsolete_positions.order_by("updated_at")
         
@@ -321,16 +322,16 @@ def update_status(request, position_id, next_code):
     return redirect('/dashboard')
     
 # Adds necessary followups to waiting positions    
-def refresh_followups():
+def refresh_followups(request):
     user_followup_setting = 7
     today_minus_days = datetime.now() + relativedelta(days=-user_followup_setting)
 
-    for position in Position.objects.filter(status_code=1):
+    for position in User.objects.get(id=request.session['user_id']).positions.filter(status_code=1):
         if (position.updated_at.date() >= today_minus_days.date() and position.fu_sent == False):
             position.status_code == 2
             position.save()
     
-    for position in Position.objects.filter(status_code=11):
+    for position in User.objects.get(id=request.session['user_id']).positions.filter(status_code=11):
         if (position.updated_at.date() >= today_minus_days.date() and position.fu_sent == False):
             position.status_code == 13
             position.save()
