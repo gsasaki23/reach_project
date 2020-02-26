@@ -46,15 +46,20 @@ def dashboard(request):
                 
         context = {
             "current_user": User.objects.get(id=request.session['user_id']),
+            "total_positions": len(User.objects.get(id=request.session['user_id']).positions.all()),
             "today_date": datetime.now().date(),
             # Area 1
             "reached_positions": reached_positions,
+            "reached_positions_count": len(reached_positions),
             # Area 2
             "todo_positions": todo_positions,
+            "todo_positions_count": len(todo_positions),
             # Area 3
             "waiting_positions": waiting_positions,
+            "waiting_positions_count": len(waiting_positions),
             # Area 4
             "obsolete_positions": obsolete_positions,
+            "obsolete_positions_count": len(obsolete_positions),
         }
         return render(request, 'dashboard.html', context)
     except KeyError:
@@ -215,9 +220,6 @@ def update_status(request, position_id, next_code):
         pos.fu_sent = False
         pos.assignment_done = False
         pos.ty_sent = False
-    elif pos.status_code == 1 and next_code == 32:
-        pos.status_code = 32
-        pos.fu_sent = False
 
     elif pos.status_code == 11 and next_code == 4:
         pos.status_code = 4
@@ -234,11 +236,6 @@ def update_status(request, position_id, next_code):
         pos.fu_sent = False
         pos.assignment_done = False
         pos.ty_sent = False
-    elif pos.status_code == 11 and next_code == 34:
-        pos.status_code = 34
-        pos.fu_sent = False
-        pos.assignment_done = False
-        pos.ty_sent = False
     
     elif pos.status_code == 2 and next_code == 1:
         pos.status_code = 1
@@ -250,8 +247,8 @@ def update_status(request, position_id, next_code):
         pos.status_code = 12
         pos.fu_sent = False
         pos.ty_sent = False
-    elif pos.status_code == 4 and next_code == 21:
-        pos.status_code = 21
+    elif pos.status_code == 4 and next_code == 31:
+        pos.status_code = 31
         pos.fu_sent = False
         pos.assignment_done = False
         pos.ty_sent = False

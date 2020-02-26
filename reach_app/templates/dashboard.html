@@ -17,13 +17,23 @@
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
 
+    <style>
+        #logo {
+
+        }
+        #section-header {
+            border-radius: 10px 10px 0px 0px;
+        }
+    </style>
+
 </head>
 
 <body>
     <div class="container-fluid bg-light">
         <!-- NavBar -->
         <nav class="navbar navbar-expand-sm navbar-light bg-light">
-            <a class="navbar-brand">Hello {{current_user.first_name}}!</a>
+            <a class="navbar-brand" id="logo">Reach</a>
+            <h3 class="text-center font-italic">{{current_user.first_name}} has applied to: {{total_positions}} total positions!</h3>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -34,361 +44,450 @@
                 <button class="btn btn-secondary mr-3" onclick="location.href='/new'">Add</button>
                 <button class="btn btn-secondary" onclick="location.href='/logout'">Log Out</button>
             </div>
-        </nav><!-- NavBar -->
+        </nav><!-- E N D NavBar -->
 
-        <!-- Reached -->
-        <div class="row">
-            <div class="col">
-                <h3 class="bg-success p-3 mb-0">Reached!</h3>
-                <table class="table table-bordered table-hover table-sm">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th style="width: 7%">Action</th>
-                            <th style="width: 10%">Status</th>
-                            <th style="width: 10%">Last Action</th>
-                            <th style="width: 15%">Position</th>
-                            <th style="width: 10%">Company</th>
-                            <th style="width: 15%">Contact</th>
-                            <th style="width: 30%">Notes</th>
-                            <th style="width: 3%"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for position in reached_positions %}
-                        <tr>
-                            <td>
-                                {% if position.status_code == 21 %}
-                                <!-- 21 to 23 -->
-                                <a href="/update_status/{{position.id}}/23">Accepted</a><br>
-                                <!-- 21 to 22 -->
-                                <a href="/update_status/{{position.id}}/22">Declined</a><br>
-                                {% elif position.status_code == 22 %}
-                                <!-- 22 to 4 -->
-                                <a href="/update_status/{{position.id}}/4">Got Interview</a><br>
-                                <!-- 22 to 21 -->
-                                <a href="/update_status/{{position.id}}/21">Got New Offer</a><br>
-                                {% elif position.status_code == 23 %}
-                                -
-                            {% endif %}
-                            </td>
-    
+        <!-- Toggle Buttons for the 4 Sections -->
+        <p>
+            <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target=".multi-collapse"
+                aria-expanded="false" aria-controls="collapse-reached collapse-todo collapse-waiting collapse-obsolete">Toggle All</button>
+            <button class="btn btn-success" type="button" data-toggle="collapse" data-target="#collapse-reached"
+                aria-expanded="false" aria-controls="collapse-reached">Reached</button>
+            <button class="btn btn-danger" type="button" data-toggle="collapse" data-target="#collapse-todo"
+                aria-expanded="false" aria-controls="collapse-todo">To Do</button>
+            <button class="btn btn-warning" type="button" data-toggle="collapse" data-target="#collapse-waiting"
+                aria-expanded="false" aria-controls="collapse-waiting">Waiting</button>
+            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#collapse-obsolete"
+                aria-expanded="false" aria-controls="collapse-obsolete">Obsolete</button>
+        </p><!-- E N D Toggle Buttons for the 4 Sections -->
 
-                            <td>
-                            {% if position.status_code == 21 %}
-                                Offered<br>
-                            {% elif position.status_code == 22 %}
-                                Declined<br>
-                            {% elif position.status_code == 23 %}
-                                Accepted!<br>
-                            </td>
-                            {% endif %}
-                            
-                            <td>
-                                {{position.updated_at.date}}
-                            </td>
+        <!-- Panel for the 4 Sections -->
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <!-- Reached -->
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="heading-reached">
+                    <h3 class="panel-title bg-success p-3">
+                        <a class="btn btn-secondary" data-toggle="collapse" data-parent="#accordion" href="#collapse-reached" aria-expanded="true"
+                            aria-controls="collapse-reached">
+                            +/-
+                        </a>
+                        [{{reached_positions_count}}] Reached!
+                    </h3>
+                    
+                </div>
+                <div id="collapse-reached" class="panel-collapse collapse show multi-collapse" role="tabpanel" aria-labelledby="heading-reached">
+                    <div class="panel-body">
 
-                            <td>
-                                {{ position.title }}<br>
-                                {{ position.location }}<br>
-                                ${{ position.salary }}<br>
-                                <a href="{{ position.posting }}">Link</a>
-                            </td>
-                            <td>
-                                {{ position.company.name }}<br>
-                                {% if position.company.info != "" %}
-                                <a href="{{ position.company.info }}">Link</a>
-                                {% endif %}
-                            </td>
-                            <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
-                            <td>{{ position.note }}</td>
-                            <td><a href="/edit/{{position.id}}">Edit</a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div><!-- Reached -->
-
-        <!-- To Do -->
-        <div class="row">
-            <div class="col">
-                <h2 class="bg-danger p-3 mb-0">To Do</h2>
-                <table class="table table-bordered table-hover table-sm">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th style="width: 7%">Action</th>
-                            <th style="width: 10%">Status</th>
-                            <th style="width: 10%">Last Action</th>
-                            <th style="width: 15%">Position</th>
-                            <th style="width: 10%">Company</th>
-                            <th style="width: 15%">Contact</th>
-                            <th style="width: 30%">Notes</th>
-                            <th style="width: 3%"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for position in todo_positions %}
-                        <tr>
-                            <td>
-                                {% if position.status_code == 2 %}
-                                <!-- 2 to 1 -->
-                                <a href="/update_status/{{position.id}}/1">Followed up</a><br>
-                                {% elif position.status_code == 3 %}
-                                <!-- 3 to 1 -->
-                                <a href="/update_status/{{position.id}}/1">Completed Assignment</a><br>
-                                {% elif position.status_code == 4 %}
-                                <!-- 4 to 12 -->
-                                <a href="/update_status/{{position.id}}/12">Took Interview</a><br>
-                                <!-- 4 to 21 -->
-                                <a href="/update_status/{{position.id}}/21">Interview Cancelled</a><br>
-                                {% elif position.status_code == 12 %}
-                                <!-- 12 to 11 -->
-                                <a href="/update_status/{{position.id}}/11">Thank-you Sent</a><br>
-                                {% elif position.status_code == 13 %}
-                                <!-- 13 to 11 -->
-                                <a href="/update_status/{{position.id}}/11">Follow-up Sent</a><br>
-                                {% elif position.status_code == 14 %}
-                                <!-- 14 to 11 -->
-                                <a href="/update_status/{{position.id}}/11">Completed Assignment</a><br>
-                            {% endif %}
-                            </td>
-
-                            <td>
-                            {% if position.status_code == 2 %}
-                                Applied<br>
-                                {% if position.fu_sent == False %}
-                                Need Follow-up
-                                {% endif %}
-                            {% elif position.status_code == 3 %}
-                                Applied<br>
-                                {% if position.assignment_done == False %}
-                                Do Assignment
-                                {% endif %}
-                            {% elif position.status_code == 4 %}
-                                Prep For Interview<br>
-                            {% elif position.status_code == 12 %}
-                                Interview Taken<br>
-                                {% if position.ty_sent == False %}
-                                Need Thank-you Note
-                                {% endif %}
-                            {% elif position.status_code == 13 %}
-                                Interview Taken<br>
-                                {% if position.fu_sent == False %}
-                                Need Follow-up
-                                {% endif %}
-                            {% elif position.status_code == 14 %}
-                                Interview Taken<br>
-                                {% if position.assignment_done == False %}
-                                Do Assignment
-                                {% endif %}
-                            {% endif %}
-                            </td>
-
-                            <td>{{position.updated_at.date}}</td>
-
-                            <td>
-                                {{ position.title }}<br>
-                                {{ position.location }}<br>
-                                ${{ position.salary }}<br>
-                                <a href="{{ position.posting }}">Link</a>
-                            </td>
-                            <td>
-                                {{ position.company.name }}<br>
-                                {% if position.company.info != "" %}
-                                <a href="{{ position.company.info }}">Link</a>
-                                {% endif %}
-                            </td>
-                            <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
-                            <td>{{ position.note }}</td>
-                            <td><a href="/edit/{{position.id}}">Edit</a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div><!-- To Do -->
-
-        <!-- Waiting -->
-        <div class="row">
-            <div class="col">
-                <h2 class="bg-warning p-3 mb-0">Waiting</h2>
-                <table class="table table-bordered table-hover table-sm">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th style="width: 7%">Action</th>
-                            <th style="width: 10%">Status</th>
-                            <th style="width: 10%">Last Action</th>
-                            <th style="width: 15%">Position</th>
-                            <th style="width: 10%">Company</th>
-                            <th style="width: 15%">Contact</th>
-                            <th style="width: 30%">Notes</th>
-                            <th style="width: 3%"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for position in waiting_positions %}
-                        <tr>
-
-                            <td>
-                            {% if position.status_code == 1 %}
-                                <!-- 1 to 3 -->
-                                <a href="/update_status/{{position.id}}/3">Got Assignment</a><br>
-                                <!-- 1 to 4 -->
-                                <a href="/update_status/{{position.id}}/4">Got Interview</a><br>
-                                <!-- 1 to 31 -->
-                                <a href="/update_status/{{position.id}}/31">Interview Denied</a><br>
-                                <!-- 1 to 32 -->
-                                {% if position.fu_sent == True %}
-                                <a href="/update_status/{{position.id}}/32">Mark Lost</a><br>
-                                {% endif %}
-                            {% elif position.status_code == 11 %}
-                                <!-- 11 to 4 -->
-                                <a href="/update_status/{{position.id}}/4">Got Interview</a><br>
-                                <!-- 11 to 14 -->
-                                <a href="/update_status/{{position.id}}/14">Got Assignment</a><br>
-                                <!-- 11 to 21 -->
-                                <a href="/update_status/{{position.id}}/21">Got Offer!</a><br>
-                                <!-- 11 to 33 -->
-                                <a href="/update_status/{{position.id}}/33">No Offer</a><br>
-                                <!-- 11 to 34 -->
-                                <a href="/update_status/{{position.id}}/33">Mark Lost</a><br>
-                            {% endif %}
-                            </td>
+                        <!-- Has Positions -->
+                        {% if reaching_positions_count != 0%}
+                        <table class="table table-bordered table-hover table-sm">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th style="width: 7%">Action</th>
+                                    <th style="width: 10%">Status</th>
+                                    <th style="width: 10%">Last Action</th>
+                                    <th style="width: 15%">Position</th>
+                                    <th style="width: 10%">Company</th>
+                                    <th style="width: 15%">Contact</th>
+                                    <th style="width: 30%">Notes</th>
+                                    <th style="width: 3%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for position in reached_positions %}
+                                <tr>
+                                    <td>
+                                        {% if position.status_code == 21 %}
+                                        <!-- 21 to 23 -->
+                                        <a href="/update_status/{{position.id}}/23">Accept</a><br>
+                                        <!-- 21 to 22 -->
+                                        <a href="/update_status/{{position.id}}/22">Decline</a><br>
+                                        {% elif position.status_code == 22 %}
+                                        <!-- 22 to 4 -->
+                                        <a href="/update_status/{{position.id}}/4">Re-Interview</a><br>
+                                        <!-- 22 to 21 -->
+                                        <a href="/update_status/{{position.id}}/21">New Offer</a><br>
+                                        {% elif position.status_code == 23 %}
+                                        -
+                                    {% endif %}
+                                    </td>
 
 
+                                    <td>
+                                    {% if position.status_code == 21 %}
+                                        Offered<br>
+                                    {% elif position.status_code == 22 %}
+                                        Declined<br>
+                                    {% elif position.status_code == 23 %}
+                                        Accepted!<br>
+                                    </td>
+                                    {% endif %}
+                                    
+                                    <td>
+                                        {{position.updated_at.date}}
+                                    </td>
 
-                            <td>
-                            <!-- Applied, Not interviewed Yet -->
-                            {% if position.status_code == 1 %}
-                                Applied<br>
-                                {% if position.fu_sent == True %}
-                                    Follow-up Sent
-                                {% endif %}
-                            <!-- Applied, Interviewed -->
-                            {% elif position.status_code == 11 %}
-                                Interviewed<br>
-                                {% if position.ty_sent == True %}
-                                    Thank-you Sent
-                                {% endif %}
-                                {% if position.fu_sent == True %}
-                                    Follow-up Sent
-                                {% endif %}
-                            {% endif %}
-                            </td>
-                            
-                            <td>
-                                {{position.updated_at.date}}
-                            </td>
+                                    <td>
+                                        {{ position.title }}<br>
+                                        {{ position.location }}<br>
+                                        ${{ position.salary }}<br>
+                                        <a href="{{ position.posting }}">Link</a>
+                                    </td>
+                                    <td>
+                                        {{ position.company.name }}<br>
+                                        {% if position.company.info != "" %}
+                                        <a href="{{ position.company.info }}">Link</a>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
+                                    <td>{{ position.note }}</td>
+                                    <td><a href="/edit/{{position.id}}">Edit</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %} 
 
-                            <td>
-                                {{ position.title }}<br>
-                                {{ position.location }}<br>
-                                ${{ position.salary }}<br>
-                                <a href="{{ position.posting }}">Link</a>
-                            </td>
-                            <td>
-                                {{ position.company.name }}<br>
-                                {% if position.company.info != "" %}
-                                <a href="{{ position.company.info }}">Link</a>
-                                {% endif %}
-                            </td>
-                            <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
-                            <td>{{ position.note }}</td>
-                            <td><a href="/edit/{{position.id}}">Edit</a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div><!-- Waiting -->
+                        <!-- No Positions -->
+                        {% if reaching_positions_count == 0%}
+                        <h4 class="bg-dark text-white p-2 mb-3 text-center">We'll Reach more soon!</h4>
+                        {% endif %} 
+                    </div>
+                </div>
+            </div><!-- E N D Reached -->
 
-        <!-- Obsolete -->
-        <div class="row">
-            <div class="col">
-                <h3 class="bg-info p-3 mb-0">Obsolete</h3>
-                <table class="table table-bordered table-hover table-sm">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th style="width: 7%">Action</th>
-                            <th style="width: 10%">Status</th>
-                            <th style="width: 10%">Last Action</th>
-                            <th style="width: 15%">Position</th>
-                            <th style="width: 10%">Company</th>
-                            <th style="width: 15%">Contact</th>
-                            <th style="width: 30%">Notes</th>
-                            <th style="width: 3%"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for position in obsolete_positions %}
-                        <tr>
-                            <td>
-                                {% if position.status_code == 31 %}
-                                <!-- 31 to 4 -->
-                                <a href="/update_status/{{position.id}}/4">Got Interview</a>
-                                {% elif position.status_code == 32 %}
-                                <!-- 32 to 4 -->
-                                <a href="/update_status/{{position.id}}/4">Got Interview</a>
-                                {% elif position.status_code == 33 %}
-                                <!-- 33 to 4 -->
-                                <a href="/update_status/{{position.id}}/4">Got Interview</a>
-                                <!-- 33 to 21 -->
-                                <a href="/update_status/{{position.id}}/21">Got Offer</a>
-                                {% elif position.status_code == 34 %}
-                                    <!-- 34 to 4 -->
-                                    <a href="/update_status/{{position.id}}/4">Got Interview</a>
-                                    <!-- 34 to 21 -->
-                                    <a href="/update_status/{{position.id}}/21">Got Offer</a>
-                                {% endif %}
-                            </td>
+            <!-- To Do -->
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="heading-todo">
+                    <h3 class="panel-title bg-danger p-3">
+                        <a class="btn btn-secondary" data-toggle="collapse" data-parent="#accordion" href="#collapse-todo" aria-expanded="true"
+                            aria-controls="collapse-todo">
+                            +/-
+                        </a>
+                        [{{todo_positions_count}}] To Do
+                    </h3>
+                    
+                </div>
+                <div id="collapse-todo" class="panel-collapse collapse show multi-collapse" role="tabpanel" aria-labelledby="heading-todo">
+                    <div class="panel-body">
+                        <!-- Has Positions -->
+                        {% if todo_positions_count != 0%}
+                        <table class="table table-bordered table-hover table-sm">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th style="width: 7%">Action</th>
+                                    <th style="width: 10%">Status</th>
+                                    <th style="width: 10%">Last Action</th>
+                                    <th style="width: 15%">Position</th>
+                                    <th style="width: 10%">Company</th>
+                                    <th style="width: 15%">Contact</th>
+                                    <th style="width: 30%">Notes</th>
+                                    <th style="width: 3%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for position in todo_positions %}
+                                <tr>
+                                    <td>
+                                        {% if position.status_code == 2 %}
+                                        <!-- 2 to 1 -->
+                                        <a href="/update_status/{{position.id}}/1">Followed up</a><br>
+                                        {% elif position.status_code == 3 %}
+                                        <!-- 3 to 1 -->
+                                        <a href="/update_status/{{position.id}}/1">Completed</a><br>
+                                        {% elif position.status_code == 4 %}
+                                        <!-- 4 to 12 -->
+                                        <a href="/update_status/{{position.id}}/12">Took Interview</a><br>
+                                        <!-- 4 to 21 -->
+                                        <a href="/update_status/{{position.id}}/31">Cancelled</a><br>
+                                        {% elif position.status_code == 12 %}
+                                        <!-- 12 to 11 -->
+                                        <a href="/update_status/{{position.id}}/11">Thank-you Sent</a><br>
+                                        {% elif position.status_code == 13 %}
+                                        <!-- 13 to 11 -->
+                                        <a href="/update_status/{{position.id}}/11">Follow-up Sent</a><br>
+                                        {% elif position.status_code == 14 %}
+                                        <!-- 14 to 11 -->
+                                        <a href="/update_status/{{position.id}}/11">Completed</a><br>
+                                    {% endif %}
+                                    </td>
+
+                                    <td>
+                                    {% if position.status_code == 2 %}
+                                        Applied<br>
+                                        {% if position.fu_sent == False %}
+                                        Need Follow-up
+                                        {% endif %}
+                                    {% elif position.status_code == 3 %}
+                                        Applied<br>
+                                        {% if position.assignment_done == False %}
+                                        Do Assignment
+                                        {% endif %}
+                                    {% elif position.status_code == 4 %}
+                                        Prep For Interview<br>
+                                    {% elif position.status_code == 12 %}
+                                        Interview Taken<br>
+                                        {% if position.ty_sent == False %}
+                                        Need Thank-you Note
+                                        {% endif %}
+                                    {% elif position.status_code == 13 %}
+                                        Interview Taken<br>
+                                        {% if position.fu_sent == False %}
+                                        Need Follow-up
+                                        {% endif %}
+                                    {% elif position.status_code == 14 %}
+                                        Interview Taken<br>
+                                        {% if position.assignment_done == False %}
+                                        Do Assignment
+                                        {% endif %}
+                                    {% endif %}
+                                    </td>
+
+                                    <td>{{position.updated_at.date}}</td>
+
+                                    <td>
+                                        {{ position.title }}<br>
+                                        {{ position.location }}<br>
+                                        ${{ position.salary }}<br>
+                                        <a href="{{ position.posting }}">Link</a>
+                                    </td>
+                                    <td>
+                                        {{ position.company.name }}<br>
+                                        {% if position.company.info != "" %}
+                                        <a href="{{ position.company.info }}">Link</a>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
+                                    <td>{{ position.note }}</td>
+                                    <td><a href="/edit/{{position.id}}">Edit</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+
+                        <!-- No Positions -->
+                        {% if todo_positions_count == 0%}
+                        <h4 class="bg-dark text-white p-2 mb-3 text-center">We'll hear back soon. Let's follow up!</h4>
+                        {% endif %} 
+                    </div>
+                </div>
+            </div><!-- E N D To Do -->
+
+            <!-- Waiting -->
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="heading-waiting">
+                    <h3 class="panel-title bg-warning p-3">
+                        <a class="btn btn-secondary" data-toggle="collapse" data-parent="#accordion" href="#collapse-waiting" aria-expanded="true"
+                            aria-controls="collapse-waiting">
+                            +/-
+                        </a>
+                        [{{waiting_positions_count}}] Waiting
+                    </h3>
+                    
+                </div>
+                <div id="collapse-waiting" class="panel-collapse collapse show multi-collapse" role="tabpanel" aria-labelledby="heading-waiting">
+                    <div class="panel-body">
+                        <!-- Has Positions -->
+                        {% if waiting_positions_count != 0%}
+                        <table class="table table-bordered table-hover table-sm">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th style="width: 7%">Action</th>
+                                    <th style="width: 10%">Status</th>
+                                    <th style="width: 10%">Last Action</th>
+                                    <th style="width: 15%">Position</th>
+                                    <th style="width: 10%">Company</th>
+                                    <th style="width: 15%">Contact</th>
+                                    <th style="width: 30%">Notes</th>
+                                    <th style="width: 3%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for position in waiting_positions %}
+                                <tr>
+
+                                    <td>
+                                    {% if position.status_code == 1 %}
+                                        <!-- 1 to 4 -->
+                                        <a href="/update_status/{{position.id}}/4">Got Interview</a><br>
+                                        <!-- 1 to 3 -->
+                                        <a href="/update_status/{{position.id}}/3">Got Assignment</a><br>
+                                        <!-- 1 to 31 -->
+                                        <a href="/update_status/{{position.id}}/31">Interview Denied</a><br>
+                                    {% elif position.status_code == 11 %}
+                                        <!-- 11 to 21 -->
+                                        <a href="/update_status/{{position.id}}/21">Got Offer!</a><br>
+                                        <!-- 11 to 4 -->
+                                        <a href="/update_status/{{position.id}}/4">Got Interview</a><br>
+                                        <!-- 11 to 14 -->
+                                        <a href="/update_status/{{position.id}}/14">Got Assignment</a><br>
+                                        <!-- 11 to 33 -->
+                                        <a href="/update_status/{{position.id}}/33">No Offer</a><br>
+                                    {% endif %}
+                                    </td>
 
 
-                            <td>
-                            {% if position.status_code == 31 %}
-                                Interview Declined
-                            {% elif position.status_code == 32 %}
-                                Application Lost
-                            {% elif position.status_code == 33 %}
-                                Interviewed<br>
-                                No Offer
-                            {% elif position.status_code == 34 %}
-                                Interviewed<br>
-                                Application Lost
-                            {% endif %}
-                            </td>
 
-                            <td>
-                                {{position.updated_at.date}}
-                            </td>
+                                    <td>
+                                    <!-- Applied, Not interviewed Yet -->
+                                    {% if position.status_code == 1 %}
+                                        Applied<br>
+                                        {% if position.fu_sent == True %}
+                                            Follow-up Sent
+                                        {% endif %}
+                                    <!-- Applied, Interviewed -->
+                                    {% elif position.status_code == 11 %}
+                                        Interviewed<br>
+                                        {% if position.ty_sent == True %}
+                                            Thank-you Sent
+                                        {% endif %}
+                                        {% if position.fu_sent == True %}
+                                            Follow-up Sent
+                                        {% endif %}
+                                    {% endif %}
+                                    </td>
+                                    
+                                    <td>
+                                        {{position.updated_at.date}}
+                                    </td>
 
-                            <td>
-                                {{ position.title }}<br>
-                                {{ position.location }}<br>
-                                ${{ position.salary }}<br>
-                                <a href="{{ position.posting }}">Link</a>
-                            </td>
-                            <td>
-                                {{ position.company.name }}<br>
-                                {% if position.company.info != "" %}
-                                <a href="{{ position.company.info }}">Link</a>
-                                {% endif %}
-                            </td>
-                            <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
-                            <td>{{ position.note }}</td>
-                            <td><a href="/edit/{{position.id}}">Edit</a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div><!-- Obsolete -->
+                                    <td>
+                                        {{ position.title }}<br>
+                                        {{ position.location }}<br>
+                                        ${{ position.salary }}<br>
+                                        <a href="{{ position.posting }}">Link</a>
+                                    </td>
+                                    <td>
+                                        {{ position.company.name }}<br>
+                                        {% if position.company.info != "" %}
+                                        <a href="{{ position.company.info }}">Link</a>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
+                                    <td>{{ position.note }}</td>
+                                    <td><a href="/edit/{{position.id}}">Edit</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %} 
+                        
+                        <!-- No Positions -->
+                        {% if waiting_positions_count == 0%}
+                        <h4 class="bg-dark text-white p-2 mb-3 text-center">Apply to more positions!</h4>
+                        {% endif %} 
+                    </div>
+                </div>
+            </div><!-- E N D Waiting -->
+
+            <!-- Obsolete -->
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="heading-obsolete">
+                    <h3 class="panel-title bg-info p-3">
+                        <a class="btn btn-secondary" data-toggle="collapse" data-parent="#accordion" href="#collapse-obsolete" aria-expanded="true"
+                            aria-controls="collapse-obsolete">
+                            +/-
+                        </a>
+                        [{{obsolete_positions_count}}] Obsolete
+                    </h3>
+                    
+                </div>
+                <div id="collapse-obsolete" class="panel-collapse collapse show multi-collapse" role="tabpanel" aria-labelledby="heading-obsolete">
+                    <div class="panel-body">
+
+                        <!-- Has Positions -->
+                        {% if obsolete_positions_count != 0%}
+                        <table class="table table-bordered table-hover table-sm">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th style="width: 7%">Action</th>
+                                    <th style="width: 10%">Status</th>
+                                    <th style="width: 10%">Last Action</th>
+                                    <th style="width: 15%">Position</th>
+                                    <th style="width: 10%">Company</th>
+                                    <th style="width: 15%">Contact</th>
+                                    <th style="width: 30%">Notes</th>
+                                    <th style="width: 3%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for position in obsolete_positions %}
+                                <tr>
+                                    <td>
+                                        {% if position.status_code == 31 %}
+                                        <!-- 31 to 4 -->
+                                        <a href="/update_status/{{position.id}}/4">Got Interview</a>
+                                        {% elif position.status_code == 32 %}
+                                        <!-- 32 to 4 -->
+                                        <a href="/update_status/{{position.id}}/4">Got Interview</a>
+                                        {% elif position.status_code == 33 %}
+                                        <!-- 33 to 4 -->
+                                        <a href="/update_status/{{position.id}}/4">Got Interview</a>
+                                        <!-- 33 to 21 -->
+                                        <a href="/update_status/{{position.id}}/21">Got Offer</a>
+                                        {% elif position.status_code == 34 %}
+                                            <!-- 34 to 4 -->
+                                            <a href="/update_status/{{position.id}}/4">Got Interview</a>
+                                            <!-- 34 to 21 -->
+                                            <a href="/update_status/{{position.id}}/21">Got Offer</a>
+                                        {% endif %}
+                                    </td>
+
+
+                                    <td>
+                                    {% if position.status_code == 31 %}
+                                        Interview Declined
+                                    {% elif position.status_code == 32 %}
+                                        Application Lost
+                                    {% elif position.status_code == 33 %}
+                                        Interviewed<br>
+                                        No Offer
+                                    {% elif position.status_code == 34 %}
+                                        Interviewed<br>
+                                        Application Lost
+                                    {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {{position.updated_at.date}}
+                                    </td>
+
+                                    <td>
+                                        {{ position.title }}<br>
+                                        {{ position.location }}<br>
+                                        ${{ position.salary }}<br>
+                                        <a href="{{ position.posting }}">Link</a>
+                                    </td>
+                                    <td>
+                                        {{ position.company.name }}<br>
+                                        {% if position.company.info != "" %}
+                                        <a href="{{ position.company.info }}">Link</a>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ position.contact.first_name }} {{ position.contact.first_name }}</td>
+                                    <td>{{ position.note }}</td>
+                                    <td><a href="/edit/{{position.id}}">Edit</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %} 
+
+                        <!-- No Positions -->
+                        {% if obsolete_positions_count == 0%}
+                        <h4 class="bg-dark text-white p-2 mb-3 text-center">-</h4>
+                        {% endif %} 
+                    </div>
+                </div>
+            </div><!-- E N D Obsolete -->
+        </div><!-- E N D Panel for the 4 Sections -->
 
         <!-- Footer -->
         <footer class="footer text-center">
             <div class="container">
                 <p class="text-muted">© 2020 by Gaku Sasaki</p>
             </div>
-        </footer><!-- Footer -->
+        </footer><!-- E N D Footer -->
     </div>
 </body>
 
