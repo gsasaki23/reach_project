@@ -288,27 +288,12 @@ def update_status(request, position_id, next_code):
         pos.fu_sent = False
         pos.assignment_done = False
         pos.ty_sent = False
-    elif pos.status_code == 32 and next_code == 4:
-        pos.status_code = 4
-        pos.fu_sent = False
-        pos.assignment_done = False
-        pos.ty_sent = False
     elif pos.status_code == 33 and next_code == 4:
         pos.status_code = 4
         pos.fu_sent = False
         pos.assignment_done = False
         pos.ty_sent = False
     elif pos.status_code == 33 and next_code == 21:
-        pos.status_code = 21
-        pos.fu_sent = False
-        pos.assignment_done = False
-        pos.ty_sent = False
-    elif pos.status_code == 34 and next_code == 4:
-        pos.status_code = 4
-        pos.fu_sent = False
-        pos.assignment_done = False
-        pos.ty_sent = False
-    elif pos.status_code == 34 and next_code == 21:
         pos.status_code = 21
         pos.fu_sent = False
         pos.assignment_done = False

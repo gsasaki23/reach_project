@@ -417,19 +417,12 @@
                                         {% if position.status_code == 31 %}
                                         <!-- 31 to 4 -->
                                         <a href="/update_status/{{position.id}}/4">Got Interview</a>
-                                        {% elif position.status_code == 32 %}
-                                        <!-- 32 to 4 -->
-                                        <a href="/update_status/{{position.id}}/4">Got Interview</a>
+                                        
                                         {% elif position.status_code == 33 %}
                                         <!-- 33 to 4 -->
                                         <a href="/update_status/{{position.id}}/4">Got Interview</a>
                                         <!-- 33 to 21 -->
                                         <a href="/update_status/{{position.id}}/21">Got Offer</a>
-                                        {% elif position.status_code == 34 %}
-                                            <!-- 34 to 4 -->
-                                            <a href="/update_status/{{position.id}}/4">Got Interview</a>
-                                            <!-- 34 to 21 -->
-                                            <a href="/update_status/{{position.id}}/21">Got Offer</a>
                                         {% endif %}
                                     </td>
 
@@ -437,14 +430,9 @@
                                     <td>
                                     {% if position.status_code == 31 %}
                                         Interview Declined
-                                    {% elif position.status_code == 32 %}
-                                        Application Lost
                                     {% elif position.status_code == 33 %}
                                         Interviewed<br>
                                         No Offer
-                                    {% elif position.status_code == 34 %}
-                                        Interviewed<br>
-                                        Application Lost
                                     {% endif %}
                                     </td>
 
