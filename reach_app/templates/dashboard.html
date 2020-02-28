@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reach | Dashboard</title>
+
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
@@ -17,6 +19,8 @@
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
 
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
+    
     <style>
         #logo {
             font-family: "Comic Sans MS", cursive, sans-serif;
@@ -31,23 +35,34 @@
         .panel-body {
             overflow-x:auto;
         }
-        .blinking{
-            animation:blinkingText 1s 5;
+
+        /* For Position and Company Tooltips */
+        .tooltip > .tooltip-inner {
+            background-color: rgb(89, 95, 100);
+            color: white;
+            text-align: left;
         }
-        @keyframes blinkingText{
-            0%{		color: transparent;}
-            50%{	color: black;}
-            100%{	color: transparent;}
-        }
-        
     </style>
     <script>
         $(document).ready(function(){
-            $('[data-toggle="popover"]').popover({
-                trigger: 'focus',
-                html: true
+            // For the tooltips
+            $('[data-toggle="tooltip"]').tooltip({
+                boundary: 'window' 
             });
+        
+
+            // context gives "last_updated_position_id" and each tr has id "position_X"
+            // For the auto scroll
+            // $('html, body').animate({
+            //     scrollTop: $('#position_{{last_updated_position_id}}').offset().top
+            // }, 1000);
+            // For blink
+            // $('#position_{{last_updated_position_id}}').Blink(500, 5); 
         });
+        // $.fn.Blink = function (interval, iterate) {
+        //     for (i = 1; i <= iterate; i++)
+        //         $(this).fadeOut(interval).fadeIn(interval);
+        // }
     </script>
 </head>
 
@@ -122,7 +137,7 @@
                             </thead>
                             <tbody>
                                 {% for position in reached_positions %}
-                                <tr>
+                                <tr id="position_{{position.id}}">
                                     <td>
                                         {% if position.status_code == 21 %}
                                         <!-- 21 to 23 -->
@@ -155,15 +170,23 @@
                                     </td>
 
                                     <td>
-                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.title }}" data-content="<u>Location:</u><br/> {{ position.location }}<br/><u>Salary:</u><br/> ${{ position.salary }}<br/><u>Posting:</u><br/> <a href='{{ position.posting }}'>Link</a>"><b>{{ position.title }}</b></a><br>
+                                        <!-- Tooltip -->
+                                        <button type="button" class="btn btn-light" data-toggle="tooltip" data-html="true" data-placement="left" title="<u class='h4'>Location:</u><br/> <span class='h4'>{{ position.location }}</span><br/><br/><u class='h4'>Salary:</u><br/> <span class='h4'>${{ position.salary }}</span><br/><br/><u class='h4'>Posting:</u><br/> <a class='h4' href='{{ position.posting }}'>Link</a>">
+                                            <b>{{ position.title }}</b>
+                                        </button>
                                     </td>
                                     <td>
-                                        {% if position.company.info == "" %}
-                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content=""><b>{{ position.company.name }}</b></a><br>
+                                        <!-- Tooltip -->
+                                        {% if position.company.info == "" %}  
+                                        <button type="button" class="btn btn-light" data-toggle="tooltip" data-html="true" data-placement="left" title="">
+                                            <b>{{ position.company.name }}</b>
+                                        </button>
                                         {% endif %}
                                         
                                         {% if position.company.info != "" %}
-                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content="<u>Info:</u><br/> <a href='{{ position.company.info }}'>Link</a>"><b>{{ position.company.name }}</b></a><br>
+                                        <button type="button" class="btn btn-light" data-toggle="tooltip" data-html="true" data-placement="left" title="<a class='h4' href='{{ position.posting }}'>Link</a>">
+                                            <b>{{ position.company.name }}</b>
+                                        </button>
                                         {% endif %}
                                     </td>
 
@@ -219,7 +242,7 @@
                             </thead>
                             <tbody>
                                 {% for position in todo_positions %}
-                                <tr>
+                                <tr id="position_{{position.id}}">
                                     <td>
                                         {% if position.status_code == 2 %}
                                         <!-- 2 to 1 -->
@@ -278,15 +301,23 @@
                                     <td>{{position.updated_at.date}}</td>
 
                                     <td>
-                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.title }}" data-content="<u>Location:</u><br/> {{ position.location }}<br/><u>Salary:</u><br/> ${{ position.salary }}<br/><u>Posting:</u><br/> <a href='{{ position.posting }}'>Link</a>"><b>{{ position.title }}</b></a><br>
+                                        <!-- Tooltip Version -->
+                                        <button type="button" class="btn btn-light" data-toggle="tooltip" data-html="true" data-placement="left" title="<u class='h4'>Location:</u><br/> <span class='h4'>{{ position.location }}</span><br/><br/><u class='h4'>Salary:</u><br/> <span class='h4'>${{ position.salary }}</span><br/><br/><u class='h4'>Posting:</u><br/> <a class='h4' href='{{ position.posting }}'>Link</a>">
+                                            <b>{{ position.title }}</b>
+                                        </button>
                                     </td>
                                     <td>
-                                        {% if position.company.info == "" %}
-                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content=""><b>{{ position.company.name }}</b></a><br>
+                                        <!-- Tooltip Version -->
+                                        {% if position.company.info == "" %}  
+                                        <button type="button" class="btn btn-light" data-toggle="tooltip" data-html="true" data-placement="left" title="">
+                                            <b>{{ position.company.name }}</b>
+                                        </button>
                                         {% endif %}
                                         
                                         {% if position.company.info != "" %}
-                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content="<u>Info:</u><br/> <a href='{{ position.company.info }}'>Link</a>"><b>{{ position.company.name }}</b></a><br>
+                                        <button type="button" class="btn btn-light" data-toggle="tooltip" data-html="true" data-placement="left" title="<a class='h4' href='{{ position.posting }}'>Link</a>">
+                                            <b>{{ position.company.name }}</b>
+                                        </button>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -339,7 +370,7 @@
                             </thead>
                             <tbody>
                                 {% for position in waiting_positions %}
-                                <tr>
+                                <tr id="position_{{position.id}}">
 
                                     <td>
                                     {% if position.status_code == 1 %}
@@ -386,16 +417,24 @@
                                         {{position.updated_at.date}}
                                     </td>
 
-                                    <td>
-                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.title }}" data-content="<u>Location:</u><br/> {{ position.location }}<br/><u>Salary:</u><br/> ${{ position.salary }}<br/><u>Posting:</u><br/> <a href='{{ position.posting }}'>Link</a>"><b>{{ position.title }}</b></a><br>
+                                    <td>                                        
+                                        <!-- Tooltip Version -->
+                                        <button type="button" class="btn btn-light" data-toggle="tooltip" data-html="true" data-placement="left" title="<u class='h4'>Location:</u><br/> <span class='h4'>{{ position.location }}</span><br/><br/><u class='h4'>Salary:</u><br/> <span class='h4'>${{ position.salary }}</span><br/><br/><u class='h4'>Posting:</u><br/> <a class='h4' href='{{ position.posting }}'>Link</a>">
+                                            <b>{{ position.title }}</b>
+                                        </button>
                                     </td>
                                     <td>
-                                        {% if position.company.info == "" %}
-                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content=""><b>{{ position.company.name }}</b></a><br>
+                                        <!-- Tooltip Version -->
+                                        {% if position.company.info == "" %}  
+                                        <button type="button" class="btn btn-light" data-toggle="tooltip" data-html="true" data-placement="left" title="">
+                                            <b>{{ position.company.name }}</b>
+                                        </button>
                                         {% endif %}
                                         
                                         {% if position.company.info != "" %}
-                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content="<u>Info:</u><br/> <a href='{{ position.company.info }}'>Link</a>"><b>{{ position.company.name }}</b></a><br>
+                                        <button type="button" class="btn btn-light" data-toggle="tooltip" data-html="true" data-placement="left" title="<a class='h4' href='{{ position.posting }}'>Link</a>">
+                                            <b>{{ position.company.name }}</b>
+                                        </button>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -449,7 +488,7 @@
                             </thead>
                             <tbody>
                                 {% for position in obsolete_positions %}
-                                <tr>
+                                <tr id="position_{{position.id}}">
                                     <td>
                                         {% if position.status_code == 31 %}
                                         <!-- 31 to 4 -->
@@ -477,16 +516,24 @@
                                         {{position.updated_at.date}}
                                     </td>
 
-                                    <td>
-                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.title }}" data-content="<u>Location:</u><br/> {{ position.location }}<br/><u>Salary:</u><br/> ${{ position.salary }}<br/><u>Posting:</u><br/> <a href='{{ position.posting }}'>Link</a>"><b>{{ position.title }}</b></a><br>
+                                    <td>                                        
+                                        <!-- Tooltip Version -->
+                                        <button type="button" class="btn btn-light" data-toggle="tooltip" data-html="true" data-placement="left" title="<u class='h4'>Location:</u><br/> <span class='h4'>{{ position.location }}</span><br/><br/><u class='h4'>Salary:</u><br/> <span class='h4'>${{ position.salary }}</span><br/><br/><u class='h4'>Posting:</u><br/> <a class='h4' href='{{ position.posting }}'>Link</a>">
+                                            <b>{{ position.title }}</b>
+                                        </button>
                                     </td>
                                     <td>
-                                        {% if position.company.info == "" %}
-                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content=""><b>{{ position.company.name }}</b></a><br>
+                                        <!-- Tooltip Version -->
+                                        {% if position.company.info == "" %}  
+                                        <button type="button" class="btn btn-light" data-toggle="tooltip" data-html="true" data-placement="left" title="">
+                                            <b>{{ position.company.name }}</b>
+                                        </button>
                                         {% endif %}
                                         
                                         {% if position.company.info != "" %}
-                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content="<u>Info:</u><br/> <a href='{{ position.company.info }}'>Link</a>"><b>{{ position.company.name }}</b></a><br>
+                                        <button type="button" class="btn btn-light" data-toggle="tooltip" data-html="true" data-placement="left" title="<a class='h4' href='{{ position.posting }}'>Link</a>">
+                                            <b>{{ position.company.name }}</b>
+                                        </button>
                                         {% endif %}
                                     </td>
                                     <td>

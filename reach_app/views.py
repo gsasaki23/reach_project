@@ -43,10 +43,15 @@ def dashboard(request):
         obsolete_positions = code_31 | code_32 | code_33 | code_34
         obsolete_positions.order_by("updated_at")
         
-                
+        try:
+            last_updated_position_id = request.session['last_updated_position_id']
+        except:
+            last_updated_position_id = None
+        
         context = {
             "current_user": User.objects.get(id=request.session['user_id']),
             "total_positions": len(User.objects.get(id=request.session['user_id']).positions.all()),
+            "last_updated_position_id": last_updated_position_id,
             "today_date": datetime.now().date(),
             # Area 1
             "reached_positions": reached_positions,
@@ -185,6 +190,7 @@ def attempt_position(request):
             company=add_company,
             contact=add_contact,
         )
+        request.session['last_updated_position_id'] = position_id
         return redirect('/dashboard')
 
 # POST for new position, route to dashboard if success
@@ -250,6 +256,7 @@ def edit_position(request, position_id):
     
     pos.company=add_company
     pos.save()
+    request.session['last_updated_position_id'] = position_id
     return redirect('/dashboard')
 
 # POST for deleting position, route to dashboard
@@ -352,6 +359,9 @@ def update_status(request, position_id, next_code):
         pos.ty_sent = False
     
     pos.save()
+    
+    request.session['last_updated_position_id'] = position_id
+    
     return redirect('/dashboard')
     
 # Adds necessary followups to waiting positions    
