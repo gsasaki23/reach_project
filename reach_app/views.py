@@ -352,7 +352,6 @@ def update_status(request, position_id, next_code):
         pos.ty_sent = False
     
     pos.save()
-    # TODO django's updated_at auto is 7 hours ahead???
     return redirect('/dashboard')
     
 # Adds necessary followups to waiting positions    

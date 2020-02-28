@@ -19,14 +19,36 @@
 
     <style>
         #logo {
-
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            color: #17A2B8;
+            font-size: 30px;
+            font-weight: bolder;
         }
         .panel-title {
             margin-bottom: 0;
             border-radius: 10px 10px 0px 0px;
         }
+        .panel-body {
+            overflow-x:auto;
+        }
+        .blinking{
+            animation:blinkingText 1s 5;
+        }
+        @keyframes blinkingText{
+            0%{		color: transparent;}
+            50%{	color: black;}
+            100%{	color: transparent;}
+        }
+        
     </style>
-
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="popover"]').popover({
+                trigger: 'focus',
+                html: true
+            });
+        });
+    </script>
 </head>
 
 <body>
@@ -34,7 +56,7 @@
         <!-- NavBar -->
         <nav class="navbar navbar-expand-sm navbar-light bg-light">
             <a class="navbar-brand" id="logo">Reach</a>
-            <h3 class="text-center font-italic">{{current_user.first_name}} has applied to: {{total_positions}} total positions!</h3>
+            <h3 class="text-center font-italic ml-3">{{current_user.first_name}} has applied to: {{total_positions}} total positions!</h3>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -42,7 +64,7 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <div class="navbar-nav mr-auto"></div>
-                <button class="btn btn-secondary mr-3" onclick="location.href='/new'">Add</button>
+                <button class="btn btn-secondary mr-3" onclick="location.href='/new'">Add New</button>
                 <button class="btn btn-secondary" onclick="location.href='/logout'">Log Out</button>
             </div>
         </nav><!-- E N D NavBar -->
@@ -59,6 +81,7 @@
                 aria-expanded="false" aria-controls="collapse-waiting">Waiting</button>
             <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#collapse-obsolete"
                 aria-expanded="false" aria-controls="collapse-obsolete">Obsolete</button>
+
         </p><!-- E N D Toggle Buttons for the 4 Sections -->
 
         <!-- Panel for the 4 Sections -->
@@ -125,15 +148,15 @@
                                     </td>
 
                                     <td>
-                                        {{ position.title }}<br>
-                                        {{ position.location }}<br>
-                                        ${{ position.salary }}<br>
-                                        <a href="{{ position.posting }}">Link</a>
+                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.title }}" data-content="<u>Location:</u><br/> {{ position.location }}<br/><u>Salary:</u><br/> ${{ position.salary }}<br/><u>Posting:</u><br/> <a href='{{ position.posting }}'>Link</a>"><b>{{ position.title }}</b></a><br>
                                     </td>
                                     <td>
-                                        {{ position.company.name }}<br>
+                                        {% if position.company.info == "" %}
+                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content=""><b>{{ position.company.name }}</b></a><br>
+                                        {% endif %}
+                                        
                                         {% if position.company.info != "" %}
-                                        <a href="{{ position.company.info }}">Link</a>
+                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content="<u>Info:</u><br/> <a href='{{ position.company.info }}'>Link</a>"><b>{{ position.company.name }}</b></a><br>
                                         {% endif %}
                                     </td>
 
@@ -143,7 +166,9 @@
                                         {{ position.contact.email }}
                                     </td>
 
-                                    <td>{{ position.note }}</td>
+                                    <td>
+                                        {{ position.note }}
+                                    </td>
                                     <td><a href="/edit/{{position.id}}">Edit</a></td>
                                 </tr>
                                 {% endfor %}
@@ -191,21 +216,21 @@
                                     <td>
                                         {% if position.status_code == 2 %}
                                         <!-- 2 to 1 -->
-                                        <a href="/update_status/{{position.id}}/1">Followed up</a><br>
+                                        <a href="/update_status/{{position.id}}/1">Sent</a><br>
                                         {% elif position.status_code == 3 %}
                                         <!-- 3 to 1 -->
                                         <a href="/update_status/{{position.id}}/1">Completed</a><br>
                                         {% elif position.status_code == 4 %}
                                         <!-- 4 to 12 -->
-                                        <a href="/update_status/{{position.id}}/12">Took Interview</a><br>
+                                        <a href="/update_status/{{position.id}}/12">Completed</a><br>
                                         <!-- 4 to 21 -->
                                         <a href="/update_status/{{position.id}}/31">Cancelled</a><br>
                                         {% elif position.status_code == 12 %}
                                         <!-- 12 to 11 -->
-                                        <a href="/update_status/{{position.id}}/11">Thank-you Sent</a><br>
+                                        <a href="/update_status/{{position.id}}/11">Sent</a><br>
                                         {% elif position.status_code == 13 %}
                                         <!-- 13 to 11 -->
-                                        <a href="/update_status/{{position.id}}/11">Follow-up Sent</a><br>
+                                        <a href="/update_status/{{position.id}}/11">Sent</a><br>
                                         {% elif position.status_code == 14 %}
                                         <!-- 14 to 11 -->
                                         <a href="/update_status/{{position.id}}/11">Completed</a><br>
@@ -246,15 +271,15 @@
                                     <td>{{position.updated_at.date}}</td>
 
                                     <td>
-                                        {{ position.title }}<br>
-                                        {{ position.location }}<br>
-                                        ${{ position.salary }}<br>
-                                        <a href="{{ position.posting }}">Link</a>
+                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.title }}" data-content="<u>Location:</u><br/> {{ position.location }}<br/><u>Salary:</u><br/> ${{ position.salary }}<br/><u>Posting:</u><br/> <a href='{{ position.posting }}'>Link</a>"><b>{{ position.title }}</b></a><br>
                                     </td>
                                     <td>
-                                        {{ position.company.name }}<br>
+                                        {% if position.company.info == "" %}
+                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content=""><b>{{ position.company.name }}</b></a><br>
+                                        {% endif %}
+                                        
                                         {% if position.company.info != "" %}
-                                        <a href="{{ position.company.info }}">Link</a>
+                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content="<u>Info:</u><br/> <a href='{{ position.company.info }}'>Link</a>"><b>{{ position.company.name }}</b></a><br>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -355,15 +380,15 @@
                                     </td>
 
                                     <td>
-                                        {{ position.title }}<br>
-                                        {{ position.location }}<br>
-                                        ${{ position.salary }}<br>
-                                        <a href="{{ position.posting }}">Link</a>
+                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.title }}" data-content="<u>Location:</u><br/> {{ position.location }}<br/><u>Salary:</u><br/> ${{ position.salary }}<br/><u>Posting:</u><br/> <a href='{{ position.posting }}'>Link</a>"><b>{{ position.title }}</b></a><br>
                                     </td>
                                     <td>
-                                        {{ position.company.name }}<br>
+                                        {% if position.company.info == "" %}
+                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content=""><b>{{ position.company.name }}</b></a><br>
+                                        {% endif %}
+                                        
                                         {% if position.company.info != "" %}
-                                        <a href="{{ position.company.info }}">Link</a>
+                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content="<u>Info:</u><br/> <a href='{{ position.company.info }}'>Link</a>"><b>{{ position.company.name }}</b></a><br>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -446,15 +471,15 @@
                                     </td>
 
                                     <td>
-                                        {{ position.title }}<br>
-                                        {{ position.location }}<br>
-                                        ${{ position.salary }}<br>
-                                        <a href="{{ position.posting }}">Link</a>
+                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.title }}" data-content="<u>Location:</u><br/> {{ position.location }}<br/><u>Salary:</u><br/> ${{ position.salary }}<br/><u>Posting:</u><br/> <a href='{{ position.posting }}'>Link</a>"><b>{{ position.title }}</b></a><br>
                                     </td>
                                     <td>
-                                        {{ position.company.name }}<br>
+                                        {% if position.company.info == "" %}
+                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content=""><b>{{ position.company.name }}</b></a><br>
+                                        {% endif %}
+                                        
                                         {% if position.company.info != "" %}
-                                        <a href="{{ position.company.info }}">Link</a>
+                                        <a class="btn btn-light" id="position-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-placement="left" title="{{ position.company.name }}" data-content="<u>Info:</u><br/> <a href='{{ position.company.info }}'>Link</a>"><b>{{ position.company.name }}</b></a><br>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -488,5 +513,4 @@
         </footer><!-- E N D Footer -->
     </div>
 </body>
-
 </html>
