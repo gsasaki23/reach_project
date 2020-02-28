@@ -1,5 +1,10 @@
 # Reach: A Job-hunt Assistant App
 
+## v1.2 (2/28/20):
+* UI Changes
+  * Minor edits to logo and headers
+  * Position and Company details are now popovers
+
 ## v1.1 (2/26/20):
 * UI Changes
   * Total applications added to header
