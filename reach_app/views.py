@@ -190,7 +190,7 @@ def attempt_position(request):
             company=add_company,
             contact=add_contact,
         )
-        request.session['last_updated_position_id'] = position_id
+        request.session['last_updated_position_id'] = Position.objects.last().id
         return redirect('/dashboard')
 
 # POST for new position, route to dashboard if success
